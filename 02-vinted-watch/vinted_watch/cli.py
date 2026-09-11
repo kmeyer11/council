@@ -20,6 +20,7 @@ from typing import List, Optional, Tuple
 
 from .client import VintedClient, VintedItem
 from .config import load_config
+from .dedupe import is_near_duplicate, normalize_title
 from .lang_filter import looks_danish_or_english
 from .storage import SeenStore
 
@@ -65,8 +66,14 @@ def run_once(config_path: str, db_path: str, favorite: bool, csv_path: Optional[
 
     client = VintedClient(domain=config.domain, auth_cookie=auth_cookie, csrf_token=csrf_token)
     new_matches: List[Tuple[str, VintedItem]] = []
+    duplicate_count = 0
 
     with SeenStore(db_path) as store:
+        # Titles already known (this run's accepted matches get added as we
+        # go, so two different sellers' re-listings of the same book don't
+        # both get through even within one run).
+        seen_titles = store.all_normalized_titles()
+
         for watch in config.watches:
             log.info("Searching watch '%s'...", watch.name)
             try:
@@ -88,7 +95,17 @@ def run_once(config_path: str, db_path: str, favorite: bool, csv_path: Optional[
                 if not store.is_new(item.id):
                     continue
 
+                if is_near_duplicate(item.title, seen_titles, config.dedup_threshold):
+                    # Same book, different seller/listing - mark it seen so it
+                    # doesn't get re-evaluated next run, but don't report or
+                    # favourite it: it'd just be a repeat of a match we already have.
+                    store.mark_seen(item.id, watch.name, item.title, item.price_amount, item.url)
+                    duplicate_count += 1
+                    log.debug("Skipping likely duplicate: %s", item.title)
+                    continue
+
                 store.mark_seen(item.id, watch.name, item.title, item.price_amount, item.url)
+                seen_titles.append(normalize_title(item.title))
                 new_matches.append((watch.name, item))
 
                 price = f"{item.price_amount} {item.price_currency}".strip()
@@ -103,7 +120,11 @@ def run_once(config_path: str, db_path: str, favorite: bool, csv_path: Optional[
     if csv_path and new_matches:
         _write_csv(csv_path, new_matches)
 
-    log.info("Done. %d new match(es) found.", len(new_matches))
+    log.info(
+        "Done. %d new match(es) found, %d duplicate listing(s) skipped.",
+        len(new_matches),
+        duplicate_count,
+    )
     return len(new_matches)
 
 

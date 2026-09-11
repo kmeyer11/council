@@ -7,7 +7,7 @@ One job: let any assistant know your homelab setup without you re-explaining it 
 - Reference (every task): `setup/hardware.md` — what physical/virtual machines exist
 - Reference (every task): `setup/network.md` — topology, addressing, DNS
 - Reference (every task): `setup/services.md` — what's running, on what port, where
-- Reference (every task): `../_shared/conventions.md` — global rules (comments, style)
+- Reference (every task): `../00-shared/conventions.md` — global rules (comments, style)
 
 Do NOT load: nothing else exists here yet — keep it that way until a second real category of fact shows up.
 
