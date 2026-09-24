@@ -29,7 +29,7 @@ Rører kun ting scriptet selv har fundet og favoriseret (sporet i `state/vinted_
 ## Kør periodisk
 
 ```cron
-*/15 * * * * cd /Users/kmeyer/Github/the-council/02-vinted-watch && .venv/bin/python -m vinted_watch.cli --config config/config.yaml --favorite --csv state/matches.csv --db state/vinted_watch.db >> state/run.log 2>&1
+*/15 * * * * cd /Users/kmeyer/Github/council/02-vinted-watch && .venv/bin/python -m vinted_watch.cli --config config/config.yaml --favorite --csv state/matches.csv --db state/vinted_watch.db >> state/run.log 2>&1
 ```
 
 (Ikke aktiveret endnu — ingen cron-job kører i øjeblikket.)
