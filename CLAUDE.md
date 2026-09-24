@@ -1,4 +1,4 @@
-# Stack
+# The Council
 
 An umbrella over your workspaces: one shared rule set (`00-shared/`), one numbered folder per workspace, each self-contained enough that any AI assistant can open it and work effectively without asking you first.
 
@@ -18,11 +18,11 @@ Full roster with status lives in `CONTEXT.md` — this table only routes.
 
 | If | Go to | Then stop at |
 |---|---|---|
-| doing homelab work (debug, add a service, check setup) | [`~/Github/homelab`](https://github.com/kmeyer11/homelab) (its own repo, own `CONTEXT.md`) | not part of Stack — cloned separately |
+| doing homelab work (debug, add a service, check setup) | [`~/Github/homelab`](https://github.com/kmeyer11/homelab) (its own repo, own `CONTEXT.md`) | not part of The Council — cloned separately |
 | running vinted-watch, or adding a new search topic/theme | `02-vinted-watch/CONTEXT.md` | read it, then `02-vinted-watch/config/topics/` and `config/criteria/` |
 | adding/updating a brand asset, or starting/building a website | `03-website-making/CONTEXT.md` | read it, then `03-website-making/assets/` and the relevant `sites/{slug}/` |
 | unsure how to comment/format code for any workspace here | `00-shared/conventions.md` | apply it, don't restate it elsewhere |
-| adding a new workspace to Stack | copy the next free number + the shape of `02-vinted-watch/` | new folder gets its own `CONTEXT.md`, add a row here and in `CONTEXT.md` |
+| adding a new workspace to The Council | copy the next free number + the shape of `02-vinted-watch/` | new folder gets its own `CONTEXT.md`, add a row here and in `CONTEXT.md` |
 
 ## The one rule
 

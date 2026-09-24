@@ -1,6 +1,6 @@
 # Conventions
 
-Rules that apply to every workspace in Stack, regardless of which folder it's working in. The agent (Claude) reads this once per task, alongside the workspace's own `CONTEXT.md` — it does not get restated per-workspace.
+Rules that apply to every workspace in The Council, regardless of which folder it's working in. The agent (Claude) reads this once per task, alongside the workspace's own `CONTEXT.md` — it does not get restated per-workspace.
 
 ## Comments
 
