@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Skum og Sandhed — Kælder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bottle:#2A1A12;
+    --bottle-raised:#35231A;
+    --line:#4E3627;
+    --foam:#F2E6CF;
+    --foam-soft:#BFA98C;
+    --amber:#E0A33A;
+    --amber-deep:#B8741C;
+    --hop:#A9BF6A;
+  }
+  *{box-sizing:border-box;}
+  html{color-scheme:dark;}
+  body{
+    margin:0;
+    background:var(--bottle);
+    color:var(--foam);
+    font-family:'Instrument Sans',system-ui,sans-serif;
+    font-size:16px;
+    line-height:1.55;
+  }
+
+  /* Heroen er selve glasset: skumtop over en ravfarvet skænk. */
+  .pour{
+    position:relative;
+    padding:88px max(16px, calc((100% - 1160px)/2)) 72px;
+    background:
+      radial-gradient(ellipse 60% 80% at 70% 110%, rgba(255,210,120,.35), transparent 70%),
+      linear-gradient(180deg, var(--amber) 0%, var(--amber-deep) 100%);
+    color:var(--bottle);
+    overflow:hidden;
+  }
+  .pour::before, .pour::after{ content:""; position:absolute; left:0; right:0; }
+  .pour::before{ top:0; height:36px; background:var(--foam); }
+  .pour::after{
+    top:36px; height:18px;
+    background:radial-gradient(circle at 18px 0, var(--foam) 17px, transparent 18px) 0 0/36px 18px repeat-x;
+  }
+  .bubbles span{
+    position:absolute; bottom:-10px; width:6px; height:6px; border-radius:50%;
+    background:rgba(255,245,220,.55);
+    animation:rise linear infinite;
+  }
+  @keyframes rise{ to{ transform:translateY(-360px); opacity:0; } }
+  @media (prefers-reduced-motion: reduce){ .bubbles{ display:none; } }
+  .pour p{ margin:0 0 6px; font-size:1.05rem; font-weight:500; }
+  .pour h1{
+    margin:0;
+    font-family:'Young Serif',Georgia,serif;
+    font-weight:400;
+    font-size:clamp(3rem, 10vw, 7.5rem);
+    line-height:.95;
+    letter-spacing:-.01em;
+  }
+  .pour .lede{ max-width:46ch; margin-top:18px; font-size:1.05rem; }
+
+  main{ padding:40px max(16px, calc((100% - 1160px)/2)) 80px; }
+
+  .tools{ display:flex; flex-wrap:wrap; gap:12px 24px; align-items:end; justify-content:space-between; margin-bottom:20px; }
+  .tools h2{ margin:0; font-family:'Young Serif',serif; font-weight:400; font-size:1.6rem; }
+  .tools h2 small{ font-family:'Instrument Sans',sans-serif; font-size:.95rem; color:var(--foam-soft); margin-left:8px; }
+  .search{
+    background:var(--bottle-raised); border:1px solid var(--line); color:var(--foam);
+    padding:10px 14px; border-radius:999px; font:inherit; min-width:min(280px,100%);
+  }
+  .search:focus-visible, th button:focus-visible, tbody tr:focus-visible, dialog button:focus-visible{
+    outline:2px solid var(--amber); outline-offset:2px;
+  }
+
+  .table-wrap{ overflow-x:auto; border-top:1px solid var(--line); }
+  table{ width:100%; border-collapse:collapse; min-width:860px; font-variant-numeric:tabular-nums; }
+  th{ text-align:left; font-weight:500; color:var(--foam-soft); font-size:.9rem; padding:0; }
+  th button{ all:unset; cursor:pointer; display:block; padding:14px 10px; }
+  th[aria-sort] button::after{ content:" ↓"; color:var(--amber); }
+  th[aria-sort="ascending"] button::after{ content:" ↑"; }
+  td{ padding:14px 10px; border-top:1px solid var(--line); vertical-align:middle; }
+  tbody tr{ cursor:pointer; }
+  tbody tr:hover{ background:var(--bottle-raised); }
+  td.name{ font-family:'Young Serif',serif; font-size:1.1rem; }
+  td.name span{ display:block; font-family:'Instrument Sans',sans-serif; font-size:.85rem; color:var(--foam-soft); }
+  td.num{ text-align:right; }
+
+  /* To glas side om side: Røverne i rav, Untappd i skum. Fyldhøjden er ratingen ud af 5. */
+  .glasses{ display:flex; gap:10px; align-items:end; }
+  .glass{ display:flex; align-items:end; gap:6px; font-size:.9rem; }
+  .glass i{
+    width:14px; height:26px; border:1.5px solid var(--foam-soft); border-top:none; border-radius:0 0 3px 3px;
+    background:linear-gradient(to top, var(--fill) var(--h), transparent var(--h));
+  }
+  .glass.r i{ --fill:var(--amber); }
+  .glass.u i{ --fill:var(--foam); }
+  .glass.u{ color:var(--foam-soft); }
+
+  dialog{
+    border:none; padding:0; max-width:min(720px, calc(100% - 32px)); width:100%;
+    background:var(--bottle-raised); color:var(--foam); border-radius:6px;
+  }
+  dialog::backdrop{ background:rgba(20,10,5,.75); }
+  dialog[open]{ animation:pourIn .25s ease-out; }
+  @keyframes pourIn{ from{ transform:translateY(12px); opacity:0; } }
+  .d-head{ padding:28px 28px 20px; background:var(--amber); color:var(--bottle); position:relative; }
+  .d-head h3{ margin:0; font-family:'Young Serif',serif; font-weight:400; font-size:2rem; line-height:1.1; }
+  .d-head p{ margin:4px 0 0; }
+  .d-close{ position:absolute; top:14px; right:14px; background:none; border:none; font-size:1.6rem; cursor:pointer; color:var(--bottle); }
+  .d-body{ padding:24px 28px 28px; }
+  .d-body blockquote{ margin:0 0 20px; font-family:'Young Serif',serif; font-size:1.15rem; line-height:1.5; }
+  .facts{ display:grid; grid-template-columns:repeat(auto-fit, minmax(130px,1fr)); gap:14px; margin:0 0 20px; }
+  .facts div{ border-top:1px solid var(--line); padding-top:8px; }
+  .facts dt{ color:var(--foam-soft); font-size:.85rem; }
+  .facts dd{ margin:0; font-size:1.1rem; }
+  .ing{ display:grid; grid-template-columns:110px 1fr; gap:8px 12px; align-items:baseline; }
+  .ing dt{ color:var(--foam-soft); font-size:.9rem; }
+  .ing dd{ margin:0; display:flex; flex-wrap:wrap; gap:6px; }
+  .tag{ border:1px solid var(--line); border-radius:999px; padding:2px 10px; font-size:.85rem; }
+  .tag.hop{ border-color:var(--hop); color:var(--hop); }
+
+  footer{ padding:24px max(16px, calc((100% - 1160px)/2)); color:var(--foam-soft); font-size:.9rem; border-top:1px solid var(--line); }
+</style>
+</head>
+<body>
+<header class="pour">
+  <div class="bubbles" aria-hidden="true"></div>
+  <p>Røverne præsenterer</p>
+  <h1>Skum og Sandhed</h1>
+  <p class="lede">Hver øl vi har åbnet, hvad vi syntes, og hvad resten af verden syntes på Untappd.</p>
+</header>
+
+<main>
+  <div class="tools">
+    <h2>Arkivet <small id="count"></small></h2>
+    <input class="search" type="search" placeholder="Søg i navn, bryggeri eller type" aria-label="Søg">
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th data-k="name"><button>Navn</button></th>
+        <th data-k="releaseYear"><button>Bryg år</button></th>
+        <th data-k="drinkingYear"><button>Druk år</button></th>
+        <th data-k="abv"><button>ABV</button></th>
+        <th data-k="fermentation"><button>Gæring</button></th>
+        <th data-k="yeastType"><button>Gærtype</button></th>
+        <th data-k="price"><button>Pris</button></th>
+        <th data-k="rating" aria-sort="descending"><button>Røverne / Untappd</button></th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</main>
+
+<footer>Data fra Røvernes regneark.</footer>
+
+<dialog id="beer">
+  <div class="d-head">
+    <button class="d-close" aria-label="Luk">×</button>
+    <h3></h3><p class="brew"></p>
+  </div>
+  <div class="d-body">
+    <blockquote></blockquote>
+    <dl class="facts"></dl>
+    <dl class="ing"></dl>
+  </div>
+</dialog>
+
+<script src="data.js"></script>
+<script>
+  const kr = n => n.toLocaleString('da-DK') + ' kr';
+  const pct = n => n.toLocaleString('da-DK', {minimumFractionDigits:1}) + ' %';
+  const dec = n => n.toLocaleString('da-DK', {minimumFractionDigits:1, maximumFractionDigits:2});
+  const glass = (cls, v) => `<span class="glass ${cls}"><i style="--h:${v/5*100}%"></i>${dec(v)}</span>`;
+
+  const tbody = document.querySelector('tbody');
+  const search = document.querySelector('.search');
+  let sortKey = 'rating', dir = -1;
+
+  function render(){
+    const q = search.value.trim().toLowerCase();
+    const rows = BEERS
+      .filter(b => !q || [b.name, ...b.breweries, ...b.types].join(' ').toLowerCase().includes(q))
+      .sort((a,b) => (a[sortKey] > b[sortKey] ? 1 : a[sortKey] < b[sortKey] ? -1 : 0) * dir);
+    document.getElementById('count').textContent = rows.length + ' øl';
+    tbody.innerHTML = rows.map(b => `
+      <tr tabindex="0" data-i="${BEERS.indexOf(b)}">
+        <td class="name">${b.name}<span>${b.breweries.join(' & ')}</span></td>
+        <td>${b.releaseYear}</td><td>${b.drinkingYear}</td>
+        <td class="num">${pct(b.abv)}</td>
+        <td>${b.fermentation}</td><td>${b.yeastType}</td>
+        <td class="num">${kr(b.price)}</td>
+        <td><span class="glasses">${glass('r', b.rating)}${glass('u', b.untappdRating)}</span></td>
+      </tr>`).join('');
+  }
+
+  document.querySelectorAll('th').forEach(th => th.querySelector('button').addEventListener('click', () => {
+    const k = th.dataset.k;
+    dir = sortKey === k ? -dir : 1; sortKey = k;
+    document.querySelectorAll('th').forEach(t => t.removeAttribute('aria-sort'));
+    th.setAttribute('aria-sort', dir === 1 ? 'ascending' : 'descending');
+    render();
+  }));
+  search.addEventListener('input', render);
+
+  const dlg = document.getElementById('beer');
+  const tags = (list, cls='') => list.length ? list.map(x => `<span class="tag ${cls}">${x}</span>`).join('') : '<span style="color:var(--foam-soft)">Ingen</span>';
+  function open(b){
+    dlg.querySelector('h3').textContent = b.name;
+    dlg.querySelector('.brew').textContent = b.breweries.join(' & ');
+    dlg.querySelector('blockquote').textContent = b.description;
+    dlg.querySelector('.facts').innerHTML = [
+      ['Røvernes rating', dec(b.rating)], ['Untappd', dec(b.untappdRating)], ['ABV', pct(b.abv)], ['Pris', kr(b.price)],
+      ['Brygget', b.releaseYear], ['Drukket', b.drinkingYear], ['Gæring', b.fermentation], ['Gærtype', b.yeastType]
+    ].map(([k,v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+    dlg.querySelector('.ing').innerHTML = `
+      <dt>Typer</dt><dd>${tags(b.types)}</dd>
+      <dt>Humle</dt><dd>${tags(b.hops,'hop')}</dd>
+      <dt>Malt</dt><dd>${tags(b.malts)}</dd>
+      <dt>Adjuncts</dt><dd>${tags(b.adjuncts)}</dd>
+      <dt>Passer til</dt><dd>${b.foodPairing}</dd>`;
+    dlg.showModal();
+  }
+  tbody.addEventListener('click', e => { const tr = e.target.closest('tr'); if (tr) open(BEERS[tr.dataset.i]); });
+  tbody.addEventListener('keydown', e => { if (e.key === 'Enter') { const tr = e.target.closest('tr'); if (tr) open(BEERS[tr.dataset.i]); } });
+  dlg.querySelector('.d-close').addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+
+  const bubbles = document.querySelector('.bubbles');
+  for (let i = 0; i < 18; i++){
+    const s = document.createElement('span');
+    s.style.left = Math.random()*100 + '%';
+    s.style.animationDuration = 4 + Math.random()*6 + 's';
+    s.style.animationDelay = -Math.random()*8 + 's';
+    const size = 3 + Math.random()*6; s.style.width = s.style.height = size + 'px';
+    bubbles.appendChild(s);
+  }
+  render();
+</script>
+</body>
+</html>

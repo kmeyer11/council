@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Skum og Sandhed — Minimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F3F5F4;
+    --surface:#FCFCFB;
+    --ink:#16201C;
+    --ink-soft:#5B6661;
+    --line:#D5DBD8;
+    --grid:#E6EAE8;
+    --roeverne:#C47A1C;
+    --untappd:#2F6BC4;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#141A18; --surface:#1B2320; --ink:#E6EBE8; --ink-soft:#98A39E;
+      --line:#2E3834; --grid:#232C28; --roeverne:#C0821F; --untappd:#5585D6;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#141A18; --surface:#1B2320; --ink:#E6EBE8; --ink-soft:#98A39E;
+    --line:#2E3834; --grid:#232C28; --roeverne:#C0821F; --untappd:#5585D6;
+  }
+  *{box-sizing:border-box;}
+  html{color-scheme:light dark;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Schibsted Grotesk',system-ui,sans-serif; font-size:16px; line-height:1.5;
+    padding-inline:max(16px, calc((100% - 1080px)/2));
+  }
+  .top{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; padding:24px 0; border-bottom:1px solid var(--line); }
+  .wordmark{ font-weight:900; font-size:1.25rem; letter-spacing:-.02em; }
+  .top span{ color:var(--ink-soft); }
+
+  /* Heroen er en påstand udledt af data: hvor uenige er Røverne med Untappd. */
+  .claim{ padding:56px 0 24px; max-width:22ch; }
+  .claim h1{ margin:0; font-weight:900; font-size:clamp(2.2rem, 6vw, 4rem); line-height:1.02; letter-spacing:-.03em; }
+  .claim p{ margin:18px 0 0; color:var(--ink-soft); font-size:1.05rem; max-width:52ch; }
+
+  .legend{ display:flex; gap:20px; font-size:.95rem; margin:28px 0 8px; }
+  .legend span{ display:inline-flex; align-items:center; gap:8px; }
+  .legend i{ width:10px; height:10px; border-radius:50%; background:var(--c); }
+
+  .chart{ background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:16px 20px 12px; }
+  .row{
+    display:grid; grid-template-columns:minmax(120px, 220px) 1fr 56px; align-items:center; gap:16px;
+    width:100%; padding:6px 0; background:none; border:none; font:inherit; color:inherit; text-align:left; cursor:pointer;
+  }
+  .row:hover .n{ text-decoration:underline; }
+  .row:focus-visible, .search:focus-visible, th button:focus-visible, tbody tr:focus-visible, dialog button:focus-visible{ outline:2px solid var(--untappd); outline-offset:2px; border-radius:4px; }
+  .n{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .track{ position:relative; height:24px; }
+  .track .g{ position:absolute; top:0; bottom:0; width:1px; background:var(--grid); }
+  .track .bar{ position:absolute; top:11px; height:2px; background:var(--line); }
+  .track .dot{ position:absolute; top:7px; width:10px; height:10px; margin-left:-5px; border-radius:50%; background:var(--c); box-shadow:0 0 0 2px var(--surface); }
+  .diff{ text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-soft); font-size:.9rem; }
+  .axis{ display:grid; grid-template-columns:minmax(120px, 220px) 1fr 56px; gap:16px; font-size:.8rem; color:var(--ink-soft); padding-top:6px; }
+  .axis div{ position:relative; height:16px; }
+  .axis span{ position:absolute; transform:translateX(-50%); }
+  .axis .h{ text-align:right; }
+  @media (max-width:560px){
+    .row, .axis{ grid-template-columns:96px 1fr 44px; gap:10px; }
+    .n{ font-size:.9rem; }
+  }
+  .tip{
+    position:fixed; pointer-events:none; background:var(--ink); color:var(--bg); font-size:.85rem;
+    padding:6px 10px; border-radius:6px; opacity:0; transition:opacity .1s; z-index:10; white-space:nowrap;
+  }
+
+  section.all{ margin:64px 0 80px; }
+  .tools{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
+  .tools h2{ margin:0; font-size:1.4rem; letter-spacing:-.01em; }
+  .search{ font:inherit; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:9px 12px; min-width:min(280px,100%); }
+  .table-wrap{ overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; min-width:900px; font-variant-numeric:tabular-nums; font-size:.95rem; }
+  th{ text-align:left; font-weight:500; color:var(--ink-soft); padding:0; border-bottom:1px solid var(--line); }
+  th button{ all:unset; cursor:pointer; display:block; padding:10px 8px; }
+  th[aria-sort] button{ color:var(--ink); }
+  th[aria-sort] button::after{ content:" ↓"; }
+  th[aria-sort="ascending"] button::after{ content:" ↑"; }
+  td{ padding:11px 8px; border-bottom:1px solid var(--grid); }
+  td.num, th.num button{ text-align:right; }
+  tbody tr{ cursor:pointer; }
+  tbody tr:hover{ background:var(--surface); }
+  td b{ font-weight:500; }
+
+  dialog{ border:1px solid var(--line); border-radius:12px; padding:0; width:min(640px, calc(100% - 32px)); background:var(--surface); color:var(--ink); }
+  dialog::backdrop{ background:rgba(10,15,13,.45); }
+  .dh{ padding:24px 24px 0; display:flex; justify-content:space-between; gap:16px; }
+  .dh h3{ margin:0; font-size:1.8rem; font-weight:900; letter-spacing:-.02em; line-height:1.1; }
+  .dh p{ margin:4px 0 0; color:var(--ink-soft); }
+  .dh button{ border:none; background:none; font-size:1.6rem; line-height:1; color:var(--ink-soft); cursor:pointer; align-self:start; }
+  .db{ padding:20px 24px 24px; }
+  .vs{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+  .vs div{ border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
+  .vs dt{ display:flex; align-items:center; gap:8px; color:var(--ink-soft); font-size:.9rem; }
+  .vs dt i{ width:10px; height:10px; border-radius:50%; background:var(--c); }
+  .vs dd{ margin:2px 0 0; font-size:2rem; font-weight:700; font-variant-numeric:tabular-nums; }
+  .db p{ margin:0 0 20px; max-width:60ch; }
+  .kv{ display:grid; grid-template-columns:110px 1fr; gap:8px 16px; margin:0; font-size:.95rem; }
+  .kv dt{ color:var(--ink-soft); }
+  .kv dd{ margin:0; }
+  footer{ padding:24px 0 40px; border-top:1px solid var(--line); color:var(--ink-soft); font-size:.9rem; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wordmark">Skum og Sandhed</div>
+  <span>Røverne præsenterer</span>
+</header>
+
+<section class="claim">
+  <h1 id="claim"></h1>
+  <p>Hver prik er en øl. Jo længere stregen er, jo mere er Røverne og resten af Untappd uenige. Klik på en øl for detaljer.</p>
+</section>
+
+<div class="legend" aria-hidden="true">
+  <span style="--c:var(--roeverne)"><i></i>Røverne</span>
+  <span style="--c:var(--untappd)"><i></i>Untappd</span>
+</div>
+<div class="chart" id="chart" role="list" aria-label="Røvernes rating sammenlignet med Untappd"></div>
+
+<section class="all">
+  <div class="tools">
+    <h2 id="count"></h2>
+    <input class="search" type="search" placeholder="Søg i navn, bryggeri eller type" aria-label="Søg">
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th data-k="name"><button>Navn</button></th>
+        <th data-k="releaseYear"><button>Bryg år</button></th>
+        <th data-k="drinkingYear"><button>Druk år</button></th>
+        <th data-k="abv" class="num"><button>ABV</button></th>
+        <th data-k="fermentation"><button>Gæring</button></th>
+        <th data-k="yeastType"><button>Gærtype</button></th>
+        <th data-k="price" class="num"><button>Pris</button></th>
+        <th data-k="rating" class="num" aria-sort="descending"><button>Røverne</button></th>
+        <th data-k="untappdRating" class="num"><button>Untappd</button></th>
+        <th data-k="diff" class="num"><button>Forskel</button></th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<footer>Data fra Røvernes regneark.</footer>
+
+<div class="tip" role="tooltip"></div>
+
+<dialog id="beer">
+  <div class="dh"><div><h3></h3><p class="brew"></p></div><button aria-label="Luk">×</button></div>
+  <div class="db">
+    <dl class="vs"></dl>
+    <p class="desc"></p>
+    <dl class="kv"></dl>
+  </div>
+</dialog>
+
+<script src="data.js"></script>
+<script>
+  const kr = n => n.toLocaleString('da-DK') + ' kr';
+  const pct = n => n.toLocaleString('da-DK', {minimumFractionDigits:1}) + ' %';
+  const dec = n => n.toLocaleString('da-DK', {minimumFractionDigits:1, maximumFractionDigits:2});
+  const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + dec(Math.abs(n));
+  BEERS.forEach(b => b.diff = +(b.rating - b.untappdRating).toFixed(2));
+
+  // Ratings klumper sig mellem 3 og 5, så aksen starter ved 2,5 for at uenigheden kan ses.
+  const MIN = 2.5, MAX = 5;
+  const x = v => ((v - MIN) / (MAX - MIN) * 100) + '%';
+
+  const disagree = BEERS.filter(b => Math.abs(b.diff) >= 0.3).length;
+  document.getElementById('claim').textContent = `Vi er uenige med Untappd om ${disagree} af ${BEERS.length} øl.`;
+
+  const chart = document.getElementById('chart');
+  const grid = [2.5,3,3.5,4,4.5,5].map(v => `<i class="g" style="left:${x(v)}"></i>`).join('');
+  chart.innerHTML = [...BEERS].sort((a,b) => b.diff - a.diff).map(b => {
+    const lo = Math.min(b.rating, b.untappdRating), hi = Math.max(b.rating, b.untappdRating);
+    return `<button class="row" role="listitem" data-i="${BEERS.indexOf(b)}"
+      aria-label="${b.name}: Røverne ${dec(b.rating)}, Untappd ${dec(b.untappdRating)}">
+      <span class="n">${b.name}</span>
+      <span class="track">${grid}
+        <i class="bar" style="left:${x(lo)}; width:calc(${x(hi)} - ${x(lo)})"></i>
+        <i class="dot" style="--c:var(--untappd); left:${x(b.untappdRating)}" data-tip="Untappd ${dec(b.untappdRating)}"></i>
+        <i class="dot" style="--c:var(--roeverne); left:${x(b.rating)}" data-tip="Røverne ${dec(b.rating)}"></i>
+      </span>
+      <span class="diff">${sign(b.diff)}</span>
+    </button>`;
+  }).join('') + `<div class="axis" aria-hidden="true"><span></span><div>${[2.5,3,3.5,4,4.5,5].map(v => `<span style="left:${x(v)}">${dec(v)}</span>`).join('')}</div><span class="h">Forskel</span></div>`;
+
+  const tip = document.querySelector('.tip');
+  chart.addEventListener('pointermove', e => {
+    const row = e.target.closest('.row');
+    if (!row) { tip.style.opacity = 0; return; }
+    const b = BEERS[row.dataset.i];
+    tip.textContent = `${b.name}: Røverne ${dec(b.rating)}, Untappd ${dec(b.untappdRating)}`;
+    tip.style.left = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8) + 'px';
+    tip.style.top = (e.clientY - 36) + 'px';
+    tip.style.opacity = 1;
+  });
+  chart.addEventListener('pointerleave', () => tip.style.opacity = 0);
+  chart.addEventListener('click', e => { const r = e.target.closest('.row'); if (r) open(BEERS[r.dataset.i]); });
+
+  const tbody = document.querySelector('tbody');
+  const search = document.querySelector('.search');
+  let sortKey = 'rating', dir = -1;
+  function render(){
+    const q = search.value.trim().toLowerCase();
+    const rows = BEERS
+      .filter(b => !q || [b.name, ...b.breweries, ...b.types].join(' ').toLowerCase().includes(q))
+      .sort((a,b) => (a[sortKey] > b[sortKey] ? 1 : a[sortKey] < b[sortKey] ? -1 : 0) * dir);
+    document.getElementById('count').textContent = `Alle ${rows.length} øl`;
+    tbody.innerHTML = rows.map(b => `
+      <tr tabindex="0" data-i="${BEERS.indexOf(b)}">
+        <td><b>${b.name}</b></td>
+        <td>${b.releaseYear}</td><td>${b.drinkingYear}</td>
+        <td class="num">${pct(b.abv)}</td>
+        <td>${b.fermentation}</td><td>${b.yeastType}</td>
+        <td class="num">${kr(b.price)}</td>
+        <td class="num">${dec(b.rating)}</td>
+        <td class="num">${dec(b.untappdRating)}</td>
+        <td class="num">${sign(b.diff)}</td>
+      </tr>`).join('');
+  }
+  document.querySelectorAll('th').forEach(th => th.querySelector('button').addEventListener('click', () => {
+    const k = th.dataset.k;
+    dir = sortKey === k ? -dir : 1; sortKey = k;
+    document.querySelectorAll('th').forEach(t => t.removeAttribute('aria-sort'));
+    th.setAttribute('aria-sort', dir === 1 ? 'ascending' : 'descending');
+    render();
+  }));
+  search.addEventListener('input', render);
+
+  const dlg = document.getElementById('beer');
+  const list = l => l.length ? l.join(', ') : 'Ingen';
+  function open(b){
+    tip.style.opacity = 0;
+    dlg.querySelector('h3').textContent = b.name;
+    dlg.querySelector('.brew').textContent = `${b.breweries.join(' & ')}, ${b.types.join(', ').toLowerCase()}`;
+    dlg.querySelector('.vs').innerHTML = `
+      <div style="--c:var(--roeverne)"><dt><i></i>Røverne</dt><dd>${dec(b.rating)}</dd></div>
+      <div style="--c:var(--untappd)"><dt><i></i>Untappd</dt><dd>${dec(b.untappdRating)}</dd></div>`;
+    dlg.querySelector('.desc').textContent = b.description;
+    dlg.querySelector('.kv').innerHTML = [
+      ['ABV', pct(b.abv)], ['Pris', kr(b.price)], ['Brygget', b.releaseYear], ['Drukket', b.drinkingYear],
+      ['Gæring', `${b.fermentation}, ${b.yeastType.toLowerCase()}gær`], ['Humle', list(b.hops)], ['Malt', list(b.malts)],
+      ['Adjuncts', list(b.adjuncts)], ['Passer til', b.foodPairing]
+    ].map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+    dlg.showModal();
+  }
+  tbody.addEventListener('click', e => { const tr = e.target.closest('tr'); if (tr) open(BEERS[tr.dataset.i]); });
+  tbody.addEventListener('keydown', e => { if (e.key === 'Enter') { const tr = e.target.closest('tr'); if (tr) open(BEERS[tr.dataset.i]); } });
+  dlg.querySelector('.dh button').addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+  render();
+</script>
+</body>
+</html>

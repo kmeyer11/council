@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Røverne">
+<circle cx="100" cy="100" r="98" fill="#E0A33A"/>
+<circle cx="100" cy="100" r="84" fill="#2A1A12"/>
+<g transform="translate(100 101) scale(1.55) translate(-100 -101)"><path d="M80 82 L120 82 L115 134 Q114 138 110 138 L90 138 Q86 138 85 134 Z" fill="#E0A33A"/><path d="M78 84 Q78 70 90 72 Q94 64 102 68 Q110 62 116 70 Q124 70 122 84 Z" fill="#F2E6CF"/></g>
+</svg>
