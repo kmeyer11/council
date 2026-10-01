@@ -4,6 +4,7 @@ Usage (from the workspace folder):
     python -m content_machine.cli match --club vejle [--fixture ID --yes] [--force]
     python -m content_machine.cli new transfer --club liverpool --slug salah-extension
     python -m content_machine.cli render posts/vejle/2026-09-28-match-fc-kobenhavn/post.yaml
+    python -m content_machine.cli background posts/vejle/2026-09-28-match-fc-kobenhavn/post.yaml
     python -m content_machine.cli teams --search Vejle
     python -m content_machine.cli crest --search Brøndby
 """
@@ -16,12 +17,12 @@ import shutil
 import sys
 from datetime import date
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import yaml
 
 from . import media
-from .config import POSTS_DIR, ROOT, TEMPLATES_DIR, load_club, load_env
+from .config import POSTS_DIR, ROOT, TEMPLATES_DIR, load_club, load_env, load_yaml
 from .models import Event, FixtureSummary, Match
 from .render import render
 from .sources import SOURCES
@@ -75,17 +76,16 @@ def _events(events: List[Event], players_by_side: Dict[str, Dict]) -> List[Dict[
     return out
 
 
-def match_to_post(match: Match, club: Dict[str, Any], our_id: int) -> Dict[str, Any]:
+def match_to_post(match: Match, club: Dict[str, Any], our_id: int, crest_prefix: str = "") -> Dict[str, Any]:
     our_side = "home" if match.home.id == our_id else "away"
     ours = media.load_players(club["slug"])
     players_by_side = {our_side: ours, ("away" if our_side == "home" else "home"): {}}
-    our_scorers = [g.player for g in match.goals if g.side == our_side and g.note != "og"]
 
     def team(t) -> Dict[str, Any]:
-        crest = club.get("logo") if t.id == our_id and club.get("logo") else media.cache_crest(t.id, t.logo_url)
+        crest = club.get("logo") if t.id == our_id and club.get("logo") else media.cache_crest(t.id, t.logo_url, crest_prefix)
         return {"name": _team_name(t, club, our_id), "crest": crest, "score": t.score}
 
-    return {
+    post = {
         "type": "match-result",
         "club": club["slug"],
         "fixture_id": match.fixture_id,
@@ -99,8 +99,9 @@ def match_to_post(match: Match, club: Dict[str, Any], our_id: int) -> Dict[str, 
         "penalties": match.penalties,
         "goals": _events(match.goals, players_by_side),
         "red_cards": _events(match.red_cards, players_by_side),
-        "background": media.pick_background(club["slug"], our_scorers),
     }
+    post["background"] = media.pick_background(post)
+    return post
 
 
 def _write_post(post: Dict[str, Any], folder: Path, force: bool) -> Path:
@@ -153,11 +154,16 @@ def cmd_match(args) -> None:
     source, team_id = _source(club)
     with source.make_client() as client:
         match = _confirmed_match(source, client, club, team_id, args.fixture, args.yes)
-    post = match_to_post(match, club, team_id)
+    post = match_to_post(match, club, team_id, getattr(source, "CREST_PREFIX", ""))
     opponent = post["away"] if post["our_side"] == "home" else post["home"]
     folder = POSTS_DIR / club["slug"] / f"{post['date']}-match-{media.slugify(opponent['name'])}"
     path = _write_post(post, folder, args.force)
     log.info("Wrote %s", path.relative_to(ROOT))
+    if not getattr(source, "HAS_EVENTS", True):
+        # A rendered PNG without goals looks finished, so stop before rendering.
+        log.warning("This source has no goals or red cards. Fill them in (and background:) "
+                    "from two sources, then run: render %s", path.relative_to(ROOT))
+        return
     if not args.no_render:
         render([path])
 
@@ -178,7 +184,25 @@ def cmd_new(args) -> None:
     text = re.sub(r"(?m)^club: .*$", f"club: {args.club}", path.read_text(encoding="utf-8"))
     text = re.sub(r"(?m)^date: .*$", f'date: "{day}"', text)
     path.write_text(text, encoding="utf-8")
+    # A match post's example score is placeholder data, so its background is
+    # picked by `background` once the real score and goals are filled in.
+    if args.type != "match-result":
+        _set_background(path)
     print(path.relative_to(ROOT))
+
+
+def _set_background(path: Path) -> Optional[str]:
+    # Rewrites only the background line so the template's comments survive.
+    bg = media.pick_background(load_yaml(path))
+    text = path.read_text(encoding="utf-8")
+    text = re.sub(r"(?m)^background:[^#\n]*?(\s*#|$)", lambda m: f"background: {bg or 'null'}{m.group(1)}", text, count=1)
+    path.write_text(text, encoding="utf-8")
+    return bg
+
+
+def cmd_background(args) -> None:
+    for p in args.posts:
+        print(_set_background(Path(p).resolve()) or "null (no photo found, the template uses the club gradient)")
 
 
 def cmd_render(args) -> None:
@@ -238,6 +262,10 @@ def main() -> None:
     p = sub.add_parser("render", help="Render one or more post.yaml files to post.png.")
     p.add_argument("posts", nargs="+")
     p.set_defaults(func=cmd_render)
+
+    p = sub.add_parser("background", help="Pick a background from the post's result or type and write it to post.yaml.")
+    p.add_argument("posts", nargs="+")
+    p.set_defaults(func=cmd_background)
 
     p = sub.add_parser("crest", help="Download a team's crest to media/crests/ and print its path.")
     p.add_argument("--search", required=True)

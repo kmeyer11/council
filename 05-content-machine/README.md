@@ -6,7 +6,7 @@ Laver Instagram-grafik til to konti, Vejle Boldklub (dansk) og Liverpool FC (eng
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt && .venv/bin/playwright install chromium
-cp .env.example .env    # indsæt API_FOOTBALL_KEY
+cp .env.example .env    # indsæt API_FOOTBALL_KEY og FOOTBALL_DATA_KEY
 .venv/bin/python -m content_machine.cli teams --search Vejle   # sæt api.team_id i clubs/vejle.yaml
 ```
 

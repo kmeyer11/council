@@ -3,11 +3,13 @@
 name: Liverpool FC
 short_name: Liverpool
 language: en
-handle: "@lfc.fan"   # placeholder until the account exists
+handle: "@kop.hub.lfc"   # Instagram account "KopHub"
 
 api:
-  source: apifootball
-  team_id: 40   # from `teams --search Liverpool`
+  # football-data.org: current season on the free plan, but no goals (see ../CONTEXT.md).
+  # With a paid API-Football key: source: apifootball, team_id: 40
+  source: footballdata
+  team_id: 64   # from `teams --search Liverpool --source footballdata`
 
 colors:
   primary: "#C8102E"
@@ -21,11 +23,14 @@ fonts:
   display: Barlow Condensed
   body: Inter
 
-logo: media/crests/40.png   # footer, and our crest on the scoreboard
+logo: media/crests/40.png   # our crest on the scoreboard
 
-team_names: {}
+team_names:   # API spelling -> ours (football-data.org short names)
+  Atleti: Atlético Madrid
+  Nottingham: Nottingham Forest
 
-round_names: {}   # API round name -> ours, e.g. "Quarter-finals": QF
+round_names:   # API round name -> ours, e.g. "Quarter-finals": QF
+  League Stage: "League phase, MD{n}"
 
 competition_names: {}
 

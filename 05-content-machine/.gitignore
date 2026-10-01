@@ -7,4 +7,7 @@ __pycache__/
 # Product + photos stay local: photos are usually someone else's copyright.
 posts/
 media/*/players/
+media/*/loss/
+media/*/serious/
+media/*/victory/
 media/crests/
