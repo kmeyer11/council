@@ -1,0 +1,11 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+# Personligt indhold - kun strukturen committes.
+profile/
+applications/
+state/
+config/criteria/

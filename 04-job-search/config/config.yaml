@@ -1,0 +1,27 @@
+# Selve søgekriterierne bor ikke her, men som .yaml-filer i criteria/ - én fil
+# per emne, hver med 'label', 'keywords' og evt. 'exclude'/'locations'.
+# Skabelon: ../templates/criteria.yaml. Se ../CONTEXT.md.
+#
+# Indstillingerne herunder gælder for alle criteria/*.yaml.
+
+# Mappe med kriterie-filer, relativt til denne fil.
+criteria_dir: "criteria"
+
+# Hvilke kilder der søges på. En criteria-fil kan indsnævre med 'sources:'.
+sources:
+  - jobindex
+  - jobnet
+
+# Opslag ældre end dette (dage siden publicering) rapporteres ikke.
+max_age_days: 21
+
+# Geografi - gælder alle criteria-filer (en criteria-fil kan overstyre enkelte
+# nøgler i sin egen 'jobindex:'/'jobnet:'-blok). Mål: Odense + ~60 km, med
+# Fredericia. Sitenes afstandsberegning er forskellig: Jobnet får først
+# Verificeret 2026-09-28.
+jobindex:
+  address: "5000 Odense C"
+  radius: 60
+jobnet:
+  postalCode: 5000
+  kmRadius: 60
