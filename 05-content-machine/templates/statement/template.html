@@ -1,0 +1,21 @@
+{% extends "_layout.html" %}
+{% block head %}
+<style>
+  .canvas.statement .shade { background: linear-gradient(180deg, rgba(0,0,0,.25), color-mix(in srgb, var(--dark) 92%, transparent) 45%); }
+  .title { font-size: 96px; max-height: 200px; overflow: hidden; }
+  .quote-mark { font: 700 220px/0.6 var(--font-display); color: var(--accent); height: 110px; }
+  .statement-body { font: 400 38px/1.45 var(--font-body); max-height: 640px; overflow: hidden; white-space: pre-line; }
+  .signed { margin-top: 36px; font: 700 28px var(--font-body); letter-spacing: .06em; text-transform: uppercase; }
+</style>
+{% endblock %}
+{% block canvas_class %}statement{% endblock %}
+{% block content %}
+<div class="layer">
+  <div class="kicker">{{ post.get('title') or s.statement }}</div>
+  <div class="spacer"></div>
+  <div class="quote-mark">“</div>
+  <div class="statement-body fit">{{ post.body | trim }}</div>
+  {% if post.get('signed') %}<div class="accent-bar"></div><div class="signed">{{ post.signed }}</div>{% endif %}
+</div>
+{% endblock %}
+{% block footer %}{{ post.date | longdate }}{% endblock %}

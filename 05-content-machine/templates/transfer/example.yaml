@@ -1,0 +1,13 @@
+type: transfer
+club: liverpool
+date: "2026-10-01"
+kind: in              # in | out | loan_in | loan_out | extension
+player: Mohamed Salah # last word is shown big
+number: 11
+position: Forward
+other_club: AS Roma   # "from" for in/loan_in, "to" for out/loan_out; ignored for extension
+other_crest: null     # e.g. media/crests/497.png
+contract_until: "2028"
+fee: null
+background: null      # e.g. media/liverpool/players/mohamed-salah/1.jpg
+background_position: center top

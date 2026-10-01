@@ -1,0 +1,54 @@
+# One file per club/account. Templates take every name, colour and text string
+# from here, so a template never names a club. See ../CONTEXT.md.
+name: Liverpool FC
+short_name: Liverpool
+language: en
+handle: "@lfc.fan"   # placeholder until the account exists
+
+api:
+  source: apifootball
+  team_id: 40   # from `teams --search Liverpool`
+
+colors:
+  primary: "#C8102E"
+  on_primary: "#FFFFFF"
+  accent: "#F6EB61"
+  dark: "#12090B"
+  light: "#FFFFFF"
+
+fonts:
+  url: "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Inter:wght@400;600;700&display=swap"
+  display: Barlow Condensed
+  body: Inter
+
+logo: media/crests/40.png   # footer, and our crest on the scoreboard
+
+team_names: {}
+
+round_names: {}   # API round name -> ours, e.g. "Quarter-finals": QF
+
+competition_names: {}
+
+strings:
+  full_time: Full time
+  round: "Matchweek {n}"
+  penalties: "{score} on penalties"
+  goal_pen: pen
+  goal_og: og
+  breaking: Breaking
+  statement: Club statement
+  transfer_in: Welcome
+  transfer_out: Farewell
+  transfer_loan_in: Loan signing
+  transfer_loan_out: Loaned out
+  transfer_extension: Extended
+  from: From
+  to: To
+  contract_until: Contract until
+  fee: Fee
+  position: Position
+  injury_update: Injury update
+  expected_return: Expected return
+  status_out: Out
+  status_doubtful: Doubtful
+  status_back: Back

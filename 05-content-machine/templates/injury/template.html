@@ -1,0 +1,36 @@
+{% extends "_layout.html" %}
+{% block head %}
+<style>
+  .list { display: flex; flex-direction: column; gap: 22px; font-size: 30px; max-height: 760px; overflow: hidden; }
+  .row {
+    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 24px;
+    background: rgba(0,0,0,.35); border-left: 8px solid var(--primary); padding: 22px 28px;
+  }
+  .row .name { font: 700 1.9em/1 var(--font-display); text-transform: uppercase; }
+  .row .meta { font-size: .9em; opacity: .8; margin-top: 10px; }
+  .pill { font: 700 .85em/1 var(--font-body); letter-spacing: .1em; text-transform: uppercase; padding: 12px 18px; border-radius: 4px; color: #fff; }
+  .pill.out { background: #D62828; }
+  .pill.doubtful { background: #E09F1F; color: #1a1a1a; }
+  .pill.back { background: #2A9D57; }
+  .note { margin-top: 28px; font-size: 28px; opacity: .85; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="layer">
+  <div class="spacer"></div>
+  <div class="kicker">{{ s.injury_update }}</div>
+  <div class="list fit">
+    {% for p in post.players %}
+    <div class="row">
+      <div>
+        <div class="name">{{ p.name }}</div>
+        <div class="meta">{{ p.injury }}{% if p.get('expected_return') %} · {{ s.expected_return }}: {{ p.expected_return }}{% endif %}</div>
+      </div>
+      <div class="pill {{ p.status }}">{{ s['status_' ~ p.status] }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% if post.get('note') %}<div class="note">{{ post.note }}</div>{% endif %}
+</div>
+{% endblock %}
+{% block footer %}{{ post.date | longdate }}{% endblock %}

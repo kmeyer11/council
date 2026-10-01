@@ -1,0 +1,24 @@
+# Normally written by `cli match`; edit freely and run `cli render` again.
+# Paths are relative to the workspace folder.
+type: match-result
+club: vejle
+fixture_id: null
+date: "2026-09-28"
+competition: 3F Superliga
+round: Runde 10
+venue: Vejle Stadion
+our_side: home
+headline: null          # optional big line above the score, e.g. "Derbysejr"
+home: {name: Vejle, crest: null, score: 3}
+away: {name: FC København, crest: null, score: 2}
+penalties: null         # "4-3" after a shootout
+goals:
+  - {minute: "12'", player: Jensen, side: home, note: ""}
+  - {minute: "34'", player: Larsen, side: away, note: pen}
+  - {minute: "58'", player: Christensen, side: home, note: ""}
+  - {minute: "77'", player: Holm, side: away, note: ""}
+  - {minute: "90+3'", player: Sørensen, side: home, note: og}
+red_cards:
+  - {minute: "81'", player: Andersen, side: away, note: ""}
+background: null        # e.g. media/vejle/players/{slug}/1.jpg
+background_position: center top
