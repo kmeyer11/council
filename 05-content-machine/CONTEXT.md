@@ -10,8 +10,8 @@ Built so far: match result (from API-Football), breaking news, club statement, t
 - `media/{club}/players.yaml`: slug → name, number, aliases, display name. The slug is also the photo folder name.
 - `media/{club}/players/{slug}.jpg` (or several in `players/{slug}/`, first alphabetically wins): player photos. Use portrait crops at least 1080 px wide with the face in the upper third, since the bottom half sits under the scoreboard and text.
 - `media/{club}/default-bg.{jpg,png}`: optional fallback background. Without one, posts use a gradient in the club colours.
-- `media/crests/`: opponent crests cached from the API as `{team_id}.png`. Our own crest is the club yaml's `logo`, which wins over the API crest.
-- `.env`: `API_FOOTBALL_KEY` (see `.env.example`).
+- `media/crests/`: opponent crests cached from the API as `{team_id}.png`. Our own crest is the club yaml's `logo`, which wins over the API crest. The footer shows only the handle, with no logo: account logos tested 2026-10-01 were unreadable at footer size.
+- `.env`: `API_FOOTBALL_KEY` and `FOOTBALL_DATA_KEY` (see `.env.example`).
 - Reference (every task): `../00-shared/conventions.md`
 
 `posts/`, player photos and crests are gitignored. Photos are usually someone else's copyright, so they stay on this machine.
@@ -24,7 +24,9 @@ All commands run from this folder with `.venv/bin/python -m content_machine.cli 
 
 ### Match result
 
-**Current mode: agent lookup.** The free API-Football plan can't serve this season, and the free alternatives either block scripts (ESPN, Sofascore's API) or lack Danish goal timelines (TheSportsDB); checked 2026-10-01. With a paid key, use the API flow below instead. Templates and posts are the same either way.
+**Current mode: agent lookup.** The free API-Football plan can't serve this season, and the free alternatives either block scripts (ESPN, Sofascore's API), lack Danish goal timelines (TheSportsDB), or give only the score (football-data.org); checked 2026-10-01. With a paid key, use the API flow below instead. Templates and posts are the same either way.
+
+**Liverpool, Premier League or Champions League:** steps 1 and 4 can start from the API flow below. `liverpool.yaml` uses the `footballdata` source, so `match` finds the match and writes `post.yaml` with the date, teams, score, round and crests. The free plan has no goals, red cards or venue, so it writes `goals: []` and doesn't render. It counts as one source for the score only. Goals, red cards and `background:` still come from step 2, and the checkpoint in step 3 still applies. Domestic cups are not covered, so a League Cup or FA Cup match won't show up as the latest match.
 
 #### Agent lookup (now)
 
@@ -68,7 +70,9 @@ Create `templates/{type}/template.html` (with `{% extends "_layout.html" %}`) an
 
 ### Data source
 
-`content_machine/sources/apifootball.py`, API-Football v3. The free plan allows 100 requests/day; one `match` run uses 2 API requests (plus 1 per other match you pick from the list); crests are plain downloads and don't count. **The free plan only serves seasons 2022–2024 (checked 2026-10-01), so it cannot fetch current matches.** `teams` and `/players/squads` do work on it. A current-season `match` fails with `Free plans do not have access to this season`. A different provider means a new module with the same functions (`make_client`, `recent_finished`, `fixture`, `search_teams`), one line in `sources/__init__.py`, and `api.source` in the club yaml.
+`content_machine/sources/apifootball.py`, API-Football v3. The free plan allows 100 requests/day; one `match` run uses 2 API requests (plus 1 per other match you pick from the list); crests are plain downloads and don't count. **The free plan only serves seasons 2022–2024 (checked 2026-10-01), so it cannot fetch current matches.** `teams` and `/players/squads` do work on it. A current-season `match` fails with `Free plans do not have access to this season`. `content_machine/sources/footballdata.py`, football-data.org v4: 10 requests/minute, current season, but on the free plan only Premier League and Champions League (of what our clubs play) and only the score. Goals, bookings and venue are `null` (checked 2026-10-01). Its team ids differ from API-Football's, so its crests are cached as `media/crests/fd-{id}.png`. Use `teams --source footballdata` for its ids. It has no search endpoint, so the search only looks through PL and CL teams. It uses short names ("Atleti"), which get mapped in the club yaml's `team_names`.
+
+A different provider means a new module with the same functions (`make_client`, `recent_finished`, `fixture`, `search_teams`), one line in `sources/__init__.py`, and `api.source` in the club yaml.
 
 ## Outputs
 

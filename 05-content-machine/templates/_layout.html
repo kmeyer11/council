@@ -29,10 +29,7 @@
   {% block content %}{% endblock %}
   <footer class="brand">
     <span>{% block footer %}{% endblock %}</span>
-    <span class="handle">
-      {%- set logo = asset(club.get('logo')) %}{% if logo %}<img src="{{ logo }}">{% endif -%}
-      {{ club.handle }}
-    </span>
+    <span class="handle">{{ club.handle }}</span>
   </footer>
 </main>
 <script>

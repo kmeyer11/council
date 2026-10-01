@@ -43,4 +43,3 @@ html, body { width: 1080px; height: 1350px; overflow: hidden; background: var(--
   opacity: .8; border-top: 1px solid rgba(255,255,255,.2); padding-top: 24px;
 }
 .brand .handle { display: flex; align-items: center; gap: 14px; text-transform: none; letter-spacing: .04em; }
-.brand img { height: 44px; }

@@ -75,14 +75,14 @@ def _events(events: List[Event], players_by_side: Dict[str, Dict]) -> List[Dict[
     return out
 
 
-def match_to_post(match: Match, club: Dict[str, Any], our_id: int) -> Dict[str, Any]:
+def match_to_post(match: Match, club: Dict[str, Any], our_id: int, crest_prefix: str = "") -> Dict[str, Any]:
     our_side = "home" if match.home.id == our_id else "away"
     ours = media.load_players(club["slug"])
     players_by_side = {our_side: ours, ("away" if our_side == "home" else "home"): {}}
     our_scorers = [g.player for g in match.goals if g.side == our_side and g.note != "og"]
 
     def team(t) -> Dict[str, Any]:
-        crest = club.get("logo") if t.id == our_id and club.get("logo") else media.cache_crest(t.id, t.logo_url)
+        crest = club.get("logo") if t.id == our_id and club.get("logo") else media.cache_crest(t.id, t.logo_url, crest_prefix)
         return {"name": _team_name(t, club, our_id), "crest": crest, "score": t.score}
 
     return {
@@ -153,11 +153,16 @@ def cmd_match(args) -> None:
     source, team_id = _source(club)
     with source.make_client() as client:
         match = _confirmed_match(source, client, club, team_id, args.fixture, args.yes)
-    post = match_to_post(match, club, team_id)
+    post = match_to_post(match, club, team_id, getattr(source, "CREST_PREFIX", ""))
     opponent = post["away"] if post["our_side"] == "home" else post["home"]
     folder = POSTS_DIR / club["slug"] / f"{post['date']}-match-{media.slugify(opponent['name'])}"
     path = _write_post(post, folder, args.force)
     log.info("Wrote %s", path.relative_to(ROOT))
+    if not getattr(source, "HAS_EVENTS", True):
+        # A rendered PNG without goals looks finished, so stop before rendering.
+        log.warning("This source has no goals or red cards. Fill them in (and background:) "
+                    "from two sources, then run: render %s", path.relative_to(ROOT))
+        return
     if not args.no_render:
         render([path])
 

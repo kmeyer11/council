@@ -78,8 +78,8 @@ def pick_background(club_slug: str, scorer_names: List[str]) -> Optional[str]:
     return None
 
 
-def cache_crest(team_id: int, url: str) -> Optional[str]:
-    path = MEDIA_DIR / "crests" / f"{team_id}.png"
+def cache_crest(team_id: int, url: str, prefix: str = "") -> Optional[str]:
+    path = MEDIA_DIR / "crests" / f"{prefix}{team_id}.png"
     if not path.exists():
         try:
             resp = httpx.get(url, timeout=20, follow_redirects=True)

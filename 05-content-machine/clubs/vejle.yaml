@@ -21,7 +21,7 @@ fonts:
   display: Oswald
   body: Inter
 
-logo: media/crests/395.png   # footer, and our crest on the scoreboard
+logo: media/crests/395.png   # our crest on the scoreboard
 
 # API-Football spells Danish clubs in English/without æøå. Key = API spelling.
 # Add a line whenever a graphic shows the wrong name.
