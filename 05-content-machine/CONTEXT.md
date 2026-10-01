@@ -1,0 +1,85 @@
+# content-machine
+
+Makes Instagram post graphics for two accounts, Vejle Boldklub (Danish) and Liverpool FC (English). Nothing is club-specific: a club is one yaml file plus one media folder, and a post type is one template folder that works for every club.
+
+Built so far: match result (from API-Football), breaking news, club statement, transfer, injury update. All are rendered as 1080×1350 PNGs (Instagram 4:5) from HTML/CSS with headless Chromium.
+
+## Inputs
+
+- `clubs/{club}.yaml`: name, language, handle, API team id, colours, fonts, logo. It also holds `team_names` / `competition_names` / `round_names` (API spelling → how the account writes it) and `strings` (every word a template prints, in the club's language). If a template needs a new word, add it to **every** club's `strings`, because missing keys fail the render.
+- `media/{club}/players.yaml`: slug → name, number, aliases, display name. The slug is also the photo folder name.
+- `media/{club}/players/{slug}.jpg` (or several in `players/{slug}/`, first alphabetically wins): player photos. Use portrait crops at least 1080 px wide with the face in the upper third, since the bottom half sits under the scoreboard and text.
+- `media/{club}/default-bg.{jpg,png}`: optional fallback background. Without one, posts use a gradient in the club colours.
+- `media/crests/`: opponent crests cached from the API as `{team_id}.png`. Our own crest is the club yaml's `logo`, which wins over the API crest.
+- `.env`: `API_FOOTBALL_KEY` (see `.env.example`).
+- Reference (every task): `../00-shared/conventions.md`
+
+`posts/`, player photos and crests are gitignored. Photos are usually someone else's copyright, so they stay on this machine.
+
+Do NOT load images as text. Don't load other `posts/*` folders when working on one post.
+
+## Process
+
+All commands run from this folder with `.venv/bin/python -m content_machine.cli …`. Setup once: `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt && .venv/bin/playwright install chromium`.
+
+### Match result
+
+**Current mode: agent lookup.** The free API-Football plan can't serve this season, and the free alternatives either block scripts (ESPN, Sofascore's API) or lack Danish goal timelines (TheSportsDB); checked 2026-10-01. With a paid key, use the API flow below instead. Templates and posts are the same either way.
+
+#### Agent lookup (now)
+
+1. Find the club's latest finished match by checking a fixtures page (fotmob, liverpoolfc.com, vejle-boldklub.dk), not just search snippets, because snippets lag behind.
+2. Get the score, competition + round, and every goal (minute, scorer, side, pen/og) and red card from **two independent sources**. Read the sides from a page that groups scorers by team. A running score like "0-1" in a snippet is easy to misread.
+3. **Checkpoint.** Show the user the date, opponent, score, goals, red cards, background choice, and the sources. Say plainly what no source mentioned (e.g. "no red cards mentioned" is not "no red cards"). Write nothing until the user confirms.
+4. `new match-result --club {club} --slug {opponent} --date {match day}`, then fill `post.yaml`:
+   - Our side's `crest:` is the club yaml's `logo`. The opponent's comes from `crest --search "{name}"`, which prints the path (free plan). If several teams match (e.g. "FC Fredericia" and "Fredericia FF"), it lists them; rerun with `--id` for the first team, not a youth or women's side.
+   - Names are written the way the account writes them (`display` in `players.yaml` for our players).
+   - `venue:` only if a source gave it.
+   - `background:` is the first of our scorers with a photo in `media/{club}/players/`, else `null`.
+5. `render posts/…/post.yaml` and show the PNG.
+
+#### API flow (needs a paid API-Football key)
+
+1. `match --club {club}` fetches the club's most recent finished match. To pick a specific match, use `--fixture ID`.
+2. **Checkpoint: confirm it's the right game.** Nothing is written until a human confirms the match (date, teams, score, competition). The API's "latest" can be a friendly, a cup game you didn't mean, or a stale result.
+   - In a terminal: it asks `[y/N]`. Answering no lists the 5 most recent finished matches to pick from.
+   - Run by the agent (no terminal): it prints the match and the list, then stops with "Not confirmed". Show both to the user, wait for their answer, then rerun with `--fixture ID --yes`. Never pass `--yes` unless the user confirmed that fixture in this session.
+3. It writes `posts/{club}/{date}-match-{opponent}/post.yaml`. The file holds the score, goals (minute, scorer, `pen`/`og`) and red cards (straight red or second yellow). Shootout kicks and missed penalties are left out.
+4. Background: the first of our scorers who has a photo, else `default-bg`, else the gradient. The choice is written to `background:` in the yaml.
+5. It renders `post.png` next to the yaml. An existing `post.yaml` is never overwritten without `--force`, because it may contain manual edits.
+6. Fixing something (wrong name, different photo, add `headline: Derbysejr`): edit `post.yaml`, then run `render posts/…/post.yaml`. The yaml is the single source of truth for that post. An English or unaccented opponent name means the club yaml needs a `team_names` line. That fixes every future post.
+
+### Announcements (breaking-news, statement, transfer, injury)
+
+1. `new {type} --club {club} --slug {short-name}` copies `templates/{type}/example.yaml` to `posts/{club}/{today}-{type}-{slug}/post.yaml`. The comments in the example explain each field.
+2. Fill in the yaml from what the user said, in the club's language. Don't invent facts (fees, contract lengths, injury details). Leave a field `null` and ask.
+3. `render posts/…/post.yaml`, then look at the PNG before handing it over.
+
+### Adding a club
+
+1. Copy one of the `clubs/*.yaml` files.
+2. Set `api.team_id` with `teams --search "{name}"`. Don't guess an id.
+3. Translate `strings` into the club's language.
+4. Create `media/{club}/players.yaml`.
+
+### Adding a post type
+
+Create `templates/{type}/template.html` (with `{% extends "_layout.html" %}`) and `templates/{type}/example.yaml` (with `type: {type}`). Every visible word comes from `s.*` (club strings) or the post yaml. Give a text box the class `fit` if long text should shrink to fit it. Shrinking only checks height when the box has a CSS `max-height`. Render the example for both clubs before calling it done.
+
+### Data source
+
+`content_machine/sources/apifootball.py`, API-Football v3. The free plan allows 100 requests/day; one `match` run uses 2 API requests (plus 1 per other match you pick from the list); crests are plain downloads and don't count. **The free plan only serves seasons 2022–2024 (checked 2026-10-01), so it cannot fetch current matches.** `teams` and `/players/squads` do work on it. A current-season `match` fails with `Free plans do not have access to this season`. A different provider means a new module with the same functions (`make_client`, `recent_finished`, `fixture`, `search_teams`), one line in `sources/__init__.py`, and `api.source` in the club yaml.
+
+## Outputs
+
+- `posts/{club}/{date}-{type}-{slug}/` → `post.yaml` (data), `post.html` (open in a browser to tweak layout), `post.png` (upload this)
+
+## Human check
+
+- Score, minutes and red cards against the official match report. API data can be late or corrected after the final whistle.
+- Look at the PNG: photo crop (face not hidden behind text), long names readable, right club colours/handle.
+- **Rights to every photo you post.** Club and agency press photos (Getty, Ritzau, etc.) are copyrighted and get taken down or claimed on Instagram. Prefer your own photos or ones you have explicit permission for.
+
+## Not built yet
+
+Season-breakdown carousel (multi-slide), stories (1080×1920), captions + hashtags, short-form video (recording an animated version of these templates, or Remotion). Each new format is a new template folder; video would add a `video.py` next to `render.py`.

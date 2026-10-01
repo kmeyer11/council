@@ -1,0 +1,14 @@
+# slug -> who it is. Photo: players/{slug}.jpg, or several in players/{slug}/
+# (first alphabetically is used). Portrait crops, at least 1080 px wide.
+# aliases: how the API writes the name, if initial + surname doesn't already match.
+# display: name shown on graphics (default: name).
+#
+# eksempel-spiller:
+#   name: Eksempel Spiller
+#   number: 10
+#   aliases: ["E. Spiller"]
+#   display: Spiller
+
+t-bach:
+  name: T. Bach        # API spelling; replace with full name if you like
+  display: Bach

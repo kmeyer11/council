@@ -1,0 +1,18 @@
+type: injury
+club: liverpool
+date: "2026-10-01"
+players:
+  - name: Mohamed Salah
+    injury: Hamstring
+    status: doubtful        # out | doubtful | back
+    expected_return: Late fitness test
+  - name: Alisson Becker
+    injury: Hip
+    status: out
+    expected_return: After the international break
+  - name: Joe Gomez
+    injury: Achilles
+    status: back
+note: null
+background: null
+background_position: center top

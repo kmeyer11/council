@@ -1,0 +1,19 @@
+# slug -> who it is. Photo: players/{slug}.jpg, or several in players/{slug}/
+# (first alphabetically is used). Portrait crops, at least 1080 px wide.
+# aliases: how the API writes the name, if initial + surname doesn't already match.
+# display: name shown on graphics (default: name).
+#
+# mohamed-salah:
+#   name: Mohamed Salah
+#   number: 11
+#   aliases: ["M. Salah"]
+#   display: Salah
+
+v-vandijk:
+  name: Virgil van Dijk
+  aliases: ["V. van Dijk"]
+  display: van Dijk
+a-isak:
+  name: Alexander Isak
+  aliases: ["A. Isak"]
+  display: Isak

@@ -1,0 +1,10 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+# Product + photos stay local: photos are usually someone else's copyright.
+posts/
+media/*/players/
+media/crests/
