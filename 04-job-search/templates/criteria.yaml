@@ -1,0 +1,33 @@
+# Kopiér til config/criteria/{emne}.yaml. Én søgning per keyword per kilde.
+label: {Emne}
+
+keywords:
+  - {søgeord eller jobtitel}
+  - {engelsk variant}
+
+# (Valgfri) opslag droppes, hvis et af ordene står i titlen (store/små bogstaver er ligegyldige).
+# Ord på op til 3 tegn (it, qa, bi) skal stå alene; længere ord matcher også
+# inde i sammensatte ord ("udvikler" rammer "softwareudvikler"). Gælder også require.
+exclude:
+  - {fx senior}
+
+# (Anbefalet) titlen skal indeholde mindst ét af disse. Begge sites matcher
+# løst (Jobnet deler "it-medarbejder" op til bare "medarbejder"), så uden
+# denne liste kommer der mange irrelevante opslag med.
+require:
+  - {fx udvikler}
+
+# (Valgfri) behold kun opslag, hvis stedet indeholder et af disse.
+# locations:
+#   - København
+
+# (Valgfri) kun disse kilder. Default: alle i config.yaml.
+# sources: [jobindex, jobnet]
+
+# (Valgfri) ekstra parametre sendt direkte til kilden. Geografien (Odense +
+# 50 km) står allerede i config.yaml. Skriv kun her for at overstyre den for
+# netop denne fil, fx en mindre radius:
+# jobindex:
+#   radius: 20
+# jobnet:
+#   kmRadius: 20
