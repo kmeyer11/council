@@ -1,0 +1,82 @@
+# One file per club/account. Templates take every name, colour and text string
+# from here, so a template never names a club. See ../CONTEXT.md.
+name: VfB Stuttgart
+short_name: VfB
+language: de
+handle: "@vfb.ross"
+
+api:
+  # football-data.org: current season on the free plan (Bundesliga + Champions League), but no goals (see ../CONTEXT.md).
+  # With a paid API-Football key: source: apifootball, team_id: 172
+  source: footballdata
+  team_id: 10   # from `teams --search Stuttgart --source footballdata`
+
+colors:
+  primary: "#E32219"
+  on_primary: "#FFFFFF"   # text on top of primary
+  accent: "#FFFFFF"
+  dark: "#141414"
+  light: "#FFFFFF"
+
+fonts:
+  url: "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Inter:wght@400;600;700&display=swap"
+  display: Barlow Condensed
+  body: Inter
+
+logo: media/crests/fd-10.png   # our crest on the scoreboard (`crests --competition BL1`)
+badge: media/crests/vfb-ross-transparent.png   # account logo, the buckle on the match graphic's top stripe (optional)
+
+# API spelling -> ours. football-data.org uses short names ("M'gladbach").
+# Add a line whenever a graphic shows the wrong name.
+team_names:
+  Bayern: FC Bayern
+  M'gladbach: Gladbach
+  Bremen: Werder Bremen
+  Atleti: Atlético Madrid
+
+# API round name -> ours. "{n}" is the matchday. Regular-season rounds use strings.round instead.
+round_names:
+  League Stage: "Ligaphase, {n}. Spieltag"
+  Knockout Round Play-offs: K.-o.-Playoffs
+  Round of 16: Achtelfinale
+  Quarter-finals: Viertelfinale
+  Semi-finals: Halbfinale
+  Final: Finale
+
+competition_names:
+  UEFA Champions League: Champions League
+  UEFA Europa League: Europa League
+  UEFA Europa Conference League: Conference League
+
+# Competition (as shown, after competition_names) -> logo next to it on match graphics.
+# Files are gitignored; download URLs are in ../CONTEXT.md.
+competition_logos:
+  Bundesliga: media/competitions/bundesliga.png
+  DFB-Pokal: media/competitions/dfb-pokal.png
+  Champions League: media/competitions/champions-league.png
+  Europa League: media/competitions/europa-league.png
+  Conference League: media/competitions/conference-league.png
+
+strings:
+  full_time: Endstand
+  round: "{n}. Spieltag"
+  penalties: "{score} i. E."
+  goal_pen: Elfm.
+  goal_og: ET
+  breaking: Breaking
+  statement: Vereinsmitteilung
+  transfer_in: Willkommen
+  transfer_out: Abschied
+  transfer_loan_in: Leihe
+  transfer_loan_out: Verliehen
+  transfer_extension: Verlängert
+  from: Von
+  to: Zu
+  contract_until: Vertrag bis
+  fee: Ablöse
+  position: Position
+  injury_update: Verletzungsupdate
+  expected_return: Rückkehr
+  status_out: Fällt aus
+  status_doubtful: Fraglich
+  status_back: Zurück

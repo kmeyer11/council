@@ -111,27 +111,30 @@ SERIOUS_TYPES = {"breaking-news", "statement"}
 
 def pick_background(post: Dict[str, Any]) -> Optional[str]:
     """Mood-based background for a post. Match result: a loss takes a random
-    photo from media/{club}/loss/, a win or draw the top scorer's photo
-    (a win without one takes a random photo from victory/).
+    photo from media/{club}/loss/, a win the top scorer's photo (or a random
+    one from victory/ if no scorer has a photo). A draw returns None: the
+    user picks that photo by hand.
     Serious announcements take a random photo from serious/. Falls back to the
     club default, else None (the template's club-colour gradient). Other
     announcements return None: their photo is about a specific player."""
     club_slug = post["club"]
     if post["type"] == "match-result":
         result = outcome(post)
+        if result == "draw":
+            return None
         if result == "loss":
             return _random_photo(club_slug, "loss") or _default_bg(club_slug)
-        photo = _top_scorer_photo(club_slug, post)
-        if not photo and result == "win":
-            photo = _random_photo(club_slug, "victory")
-        return photo or _default_bg(club_slug)
+        return _top_scorer_photo(club_slug, post) or _random_photo(club_slug, "victory") or _default_bg(club_slug)
     if post["type"] in SERIOUS_TYPES:
         return _random_photo(club_slug, "serious") or _default_bg(club_slug)
     return None
 
 
 def cache_crest(team_id: int, url: str, prefix: str = "") -> Optional[str]:
-    path = MEDIA_DIR / "crests" / f"{prefix}{team_id}.png"
+    # Keep the URL's extension: some providers serve SVG crests, and Chromium
+    # won't show an SVG saved as .png.
+    ext = Path(url.split("?")[0]).suffix.lower() or ".png"
+    path = MEDIA_DIR / "crests" / f"{prefix}{team_id}{ext}"
     if not path.exists():
         try:
             resp = httpx.get(url, timeout=20, follow_redirects=True)

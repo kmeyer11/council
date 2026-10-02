@@ -1,13 +1,13 @@
 type: transfer
-club: liverpool
+club: vfb
 date: "2026-10-01"
 kind: in              # in | out | loan_in | loan_out | extension
-player: Mohamed Salah # last word is shown big
-number: 11
-position: Forward
-other_club: AS Roma   # "from" for in/loan_in, "to" for out/loan_out; ignored for extension
-other_crest: null     # e.g. media/crests/497.png
-contract_until: "2028"
+player: Lukas Beispiel # last word is shown big
+number: 9
+position: Sturm
+other_club: SC Freiburg   # "from" for in/loan_in, "to" for out/loan_out; ignored for extension
+other_crest: media/crests/fd-17.png
+contract_until: "2030"
 fee: null
-background: null      # e.g. media/liverpool/players/mohamed-salah/1.jpg
+background: null      # e.g. media/vfb/players/lukas-beispiel/1.jpg
 background_position: center top

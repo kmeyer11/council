@@ -1,11 +1,11 @@
 type: statement
-club: vejle
+club: vfb
 date: "2026-10-01"
 title: null          # default: the club's "statement" string
 body: |
-  Vejle Boldklub tager kraftigt afstand fra de hændelser, der fandt sted efter søndagens kamp.
+  Der VfB Stuttgart distanziert sich entschieden von den Vorfällen nach dem Spiel am Sonntag.
 
-  Klubben samarbejder med politiet og vil give karantæne til de involverede.
-signed: Bestyrelsen, Vejle Boldklub
+  Der Verein arbeitet mit der Polizei zusammen und wird gegen die Beteiligten Stadionverbote aussprechen.
+signed: Vorstand, VfB Stuttgart
 background: null
 background_position: center

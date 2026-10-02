@@ -1,6 +1,23 @@
 {% extends "_layout.html" %}
 {% block head %}
 <style>
+  /* Club-colour stripe across the top (the VfB Brustring), with the account badge on it like a belt buckle. */
+  .belt {
+    position: absolute; left: 0; right: 0; top: 42px; height: 96px; z-index: 1;
+    background: var(--primary); color: var(--on-primary);
+    border-top: 6px solid var(--accent); border-bottom: 6px solid var(--accent);
+    box-shadow: 0 10px 30px rgba(0,0,0,.45);
+    display: grid; grid-template-columns: 1fr 210px 1fr; align-items: center; padding: 0 48px;
+    font: 700 26px/1.15 var(--font-body); letter-spacing: .14em; text-transform: uppercase;
+  }
+  .belt .comp { display: flex; align-items: center; gap: 16px; min-width: 0; }
+  .belt .round { text-align: right; }
+  .buckle {
+    position: absolute; left: 50%; top: 90px; width: 180px; height: 180px; z-index: 2;
+    transform: translate(-50%, -50%); filter: drop-shadow(0 12px 28px rgba(0,0,0,.6));
+  }
+  /* White badge: competition logos are mostly dark-on-white and vanish on a dark photo. */
+  .comp-logo { flex: none; height: 64px; width: 64px; object-fit: contain; background: #fff; border-radius: 12px; padding: 6px; }
   .kicker.ft { align-self: center; margin-bottom: 8px; }
   .headline { font-size: 150px; max-height: 300px; margin-bottom: 24px; overflow: hidden; }
   .scoreboard { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; }
@@ -36,7 +53,14 @@
 {%- endmacro %}
 {% block content %}
 <div class="layer">
-  <div class="top"><span>{{ post.competition }}{% if post.round %} · {{ post.round }}{% endif %}</span></div>
+  {% set comp_logo = asset((club.get('competition_logos') or {}).get(post.competition)) %}
+  {% set badge = asset(club.get('badge')) %}
+  <div class="belt">
+    <span class="comp">{% if comp_logo %}<img class="comp-logo" src="{{ comp_logo }}">{% endif %}{{ post.competition }}</span>
+    <span></span>
+    <span class="round">{{ post.round or '' }}</span>
+  </div>
+  {% if badge %}<img class="buckle" src="{{ badge }}">{% endif %}
   <div class="spacer"></div>
   <div class="kicker ft">{{ s.full_time }}</div>
   {% if post.get('headline') %}<div class="headline display fit">{{ post.headline }}</div>{% endif %}

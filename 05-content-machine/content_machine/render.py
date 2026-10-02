@@ -17,6 +17,8 @@ WIDTH, HEIGHT = 1080, 1350  # Instagram 4:5 portrait
 MONTHS = {
     "da": ["januar", "februar", "marts", "april", "maj", "juni", "juli",
            "august", "september", "oktober", "november", "december"],
+    "de": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli",
+           "August", "September", "Oktober", "November", "Dezember"],
     "en": ["January", "February", "March", "April", "May", "June", "July",
            "August", "September", "October", "November", "December"],
 }
@@ -33,7 +35,7 @@ def _asset(path: Optional[str]) -> Optional[str]:
 def _long_date(value: Any, lang: str) -> str:
     y, m, d = (int(x) for x in str(value)[:10].split("-"))
     month = MONTHS.get(lang, MONTHS["en"])[m - 1]
-    return f"{d}. {month} {y}" if lang == "da" else f"{d} {month} {y}"
+    return f"{d}. {month} {y}" if lang in ("da", "de") else f"{d} {month} {y}"
 
 
 def build_html(post: Dict[str, Any]) -> str:

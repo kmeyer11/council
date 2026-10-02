@@ -1,12 +1,13 @@
 """CLI entry point.
 
 Usage (from the workspace folder):
-    python -m content_machine.cli match --club vejle [--fixture ID --yes] [--force]
-    python -m content_machine.cli new transfer --club liverpool --slug salah-extension
-    python -m content_machine.cli render posts/vejle/2026-09-28-match-fc-kobenhavn/post.yaml
-    python -m content_machine.cli background posts/vejle/2026-09-28-match-fc-kobenhavn/post.yaml
-    python -m content_machine.cli teams --search Vejle
-    python -m content_machine.cli crest --search Brøndby
+    python -m content_machine.cli match --club vfb [--fixture ID --yes] [--force]
+    python -m content_machine.cli new transfer --club vfb --slug undav-verlaengerung
+    python -m content_machine.cli render posts/vfb/2026-09-27-match-result-bayern/post.yaml
+    python -m content_machine.cli background posts/vfb/2026-09-27-match-result-bayern/post.yaml
+    python -m content_machine.cli teams --search Stuttgart
+    python -m content_machine.cli crest --search Freiburg
+    python -m content_machine.cli crests --competition BL1
 """
 from __future__ import annotations
 
@@ -164,6 +165,9 @@ def cmd_match(args) -> None:
         log.warning("This source has no goals or red cards. Fill them in (and background:) "
                     "from two sources, then run: render %s", path.relative_to(ROOT))
         return
+    if _is_draw(post):
+        log.warning(DRAW_MSG, path.relative_to(ROOT))
+        return
     if not args.no_render:
         render([path])
 
@@ -191,9 +195,21 @@ def cmd_new(args) -> None:
     print(path.relative_to(ROOT))
 
 
+def _is_draw(post: Dict[str, Any]) -> bool:
+    return post["type"] == "match-result" and media.outcome(post) == "draw"
+
+
+DRAW_MSG = "Draw: the user picks the background. Set background: in %s by hand, then render."
+
+
 def _set_background(path: Path) -> Optional[str]:
     # Rewrites only the background line so the template's comments survive.
-    bg = media.pick_background(load_yaml(path))
+    post = load_yaml(path)
+    if _is_draw(post):
+        # Leave the line alone so a photo the user already chose survives a rerun.
+        log.warning(DRAW_MSG, path.relative_to(ROOT))
+        return post.get("background")
+    bg = media.pick_background(post)
     text = path.read_text(encoding="utf-8")
     text = re.sub(r"(?m)^background:[^#\n]*?(\s*#|$)", lambda m: f"background: {bg or 'null'}{m.group(1)}", text, count=1)
     path.write_text(text, encoding="utf-8")
@@ -202,7 +218,10 @@ def _set_background(path: Path) -> Optional[str]:
 
 def cmd_background(args) -> None:
     for p in args.posts:
-        print(_set_background(Path(p).resolve()) or "null (no photo found, the template uses the club gradient)")
+        path = Path(p).resolve()
+        bg = _set_background(path)
+        if not _is_draw(load_yaml(path)):
+            print(bg or "null (no photo found, the template uses the club gradient)")
 
 
 def cmd_render(args) -> None:
@@ -228,7 +247,17 @@ def cmd_crest(args) -> None:
         for t in teams:
             print(f"{t['id']:>6}  {t['name']}  ({t.get('country', '')})")
         raise RuntimeError("Several teams match. Rerun with --id.")
-    print(media.cache_crest(team["id"], team["logo"]))
+    print(media.cache_crest(team["id"], team["logo"], getattr(source, "CREST_PREFIX", "")))
+
+
+def cmd_crests(args) -> None:
+    # Only football-data.org lists a competition's teams on its free plan.
+    source = SOURCES["footballdata"]
+    with source.make_client() as client:
+        teams = source.competition_teams(client, args.competition)
+    for t in teams:
+        path = media.cache_crest(t["id"], t["logo"], source.CREST_PREFIX)
+        print(f"{t['id']:>6}  {t['name']:<28}  {path or 'download failed'}")
 
 
 def cmd_teams(args) -> None:
@@ -272,6 +301,10 @@ def main() -> None:
     p.add_argument("--id", type=int, help="Pick one team when the search matches several.")
     p.add_argument("--source", default="apifootball", choices=sorted(SOURCES))
     p.set_defaults(func=cmd_crest)
+
+    p = sub.add_parser("crests", help="Download every crest in a football-data.org competition (e.g. BL1).")
+    p.add_argument("--competition", required=True)
+    p.set_defaults(func=cmd_crests)
 
     p = sub.add_parser("teams", help="Look up a team id for clubs/*.yaml.")
     p.add_argument("--search", required=True)
