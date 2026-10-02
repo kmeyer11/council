@@ -24,6 +24,7 @@ fonts:
   body: Inter
 
 logo: media/crests/fd-10.png   # our crest on the scoreboard (`crests --competition BL1`)
+badge: media/crests/vfb-ross-transparent.png   # account logo, the buckle on the match graphic's top stripe (optional)
 
 # API spelling -> ours. football-data.org uses short names ("M'gladbach").
 # Add a line whenever a graphic shows the wrong name.

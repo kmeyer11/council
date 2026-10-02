@@ -6,7 +6,7 @@ Built so far: match result (from API-Football), breaking news, club statement, t
 
 ## Inputs
 
-- `clubs/{club}.yaml`: name, language, handle, API team id, colours, fonts, logo. It also holds `team_names` / `competition_names` / `round_names` (API spelling → how the account writes it), `competition_logos` (shown competition name → logo path) and `strings` (every word a template prints, in the club's language). If a template needs a new word, add it to **every** club's `strings`, because missing keys fail the render.
+- `clubs/{club}.yaml`: name, language, handle, API team id, colours, fonts, logo, and an optional `badge` (the account logo, shown as the buckle on the match graphic's top stripe in the primary colour). It also holds `team_names` / `competition_names` / `round_names` (API spelling → how the account writes it), `competition_logos` (shown competition name → logo path) and `strings` (every word a template prints, in the club's language). If a template needs a new word, add it to **every** club's `strings`, because missing keys fail the render.
 - `media/{club}/players.yaml`: slug → name, number, aliases, display name. The slug is also the photo folder name.
 - `media/{club}/players/{slug}.jpg`, or several in `players/{slug}/` (one picked at random): player photos. Use portrait crops at least 1080 px wide with the face in the upper third, since the bottom half sits under the scoreboard and text.
 - `media/{club}/default-bg.{jpg,png}`: optional fallback background. Without one, posts use a gradient in the club colours.
