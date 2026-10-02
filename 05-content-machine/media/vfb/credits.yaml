@@ -1,0 +1,9 @@
+# Photo credits, keyed by path under media/vfb/. Put `credit` in the Instagram caption
+# whenever the licence is CC BY or CC BY-SA (CC0 and public domain need none, but credit is polite).
+# Photos without an entry here are your own or unknown.
+#
+# players/{slug}/commons-1.jpg:
+#   credit: 'Photo: {author} / CC BY-SA 4.0'
+#   license: CC BY-SA 4.0
+#   author: {author}
+#   source: https://commons.wikimedia.org/wiki/File:...

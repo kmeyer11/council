@@ -1,6 +1,9 @@
 {% extends "_layout.html" %}
 {% block head %}
 <style>
+  .top .comp { display: flex; align-items: center; gap: 16px; }
+  /* White badge: competition logos are mostly dark-on-white and vanish on a dark photo. */
+  .comp-logo { height: 64px; width: 64px; object-fit: contain; background: #fff; border-radius: 12px; padding: 6px; }
   .kicker.ft { align-self: center; margin-bottom: 8px; }
   .headline { font-size: 150px; max-height: 300px; margin-bottom: 24px; overflow: hidden; }
   .scoreboard { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; }
@@ -36,7 +39,8 @@
 {%- endmacro %}
 {% block content %}
 <div class="layer">
-  <div class="top"><span>{{ post.competition }}{% if post.round %} · {{ post.round }}{% endif %}</span></div>
+  {% set comp_logo = asset((club.get('competition_logos') or {}).get(post.competition)) %}
+  <div class="top"><span class="comp">{% if comp_logo %}<img class="comp-logo" src="{{ comp_logo }}">{% endif %}{{ post.competition }}{% if post.round %} · {{ post.round }}{% endif %}</span></div>
   <div class="spacer"></div>
   <div class="kicker ft">{{ s.full_time }}</div>
   {% if post.get('headline') %}<div class="headline display fit">{{ post.headline }}</div>{% endif %}

@@ -1,24 +1,24 @@
 # Normally written by `cli match`; edit freely and run `cli render` again.
 # Paths are relative to the workspace folder.
 type: match-result
-club: vejle
+club: vfb
 fixture_id: null
-date: "2026-09-28"
-competition: 3F Superliga
-round: Runde 10
-venue: Vejle Stadion
+date: "2026-09-27"
+competition: Bundesliga
+round: 5. Spieltag
+venue: MHPArena
 our_side: home
-headline: null          # optional big line above the score, e.g. "Derbysejr"
-home: {name: Vejle, crest: null, score: 3}
-away: {name: FC København, crest: null, score: 2}
+headline: null          # optional big line above the score, e.g. "Derbysieg"
+home: {name: VfB, crest: media/crests/fd-10.png, score: 3}
+away: {name: SC Freiburg, crest: media/crests/fd-17.png, score: 2}
 penalties: null         # "4-3" after a shootout
 goals:
-  - {minute: "12'", player: Jensen, side: home, note: ""}
-  - {minute: "34'", player: Larsen, side: away, note: pen}
-  - {minute: "58'", player: Christensen, side: home, note: ""}
-  - {minute: "77'", player: Holm, side: away, note: ""}
-  - {minute: "90+3'", player: Sørensen, side: home, note: og}
+  - {minute: "12'", player: Müller, side: home, note: ""}
+  - {minute: "34'", player: Schmidt, side: away, note: pen}
+  - {minute: "58'", player: Schneider, side: home, note: ""}
+  - {minute: "77'", player: Fischer, side: away, note: ""}
+  - {minute: "90+3'", player: Weber, side: home, note: og}
 red_cards:
-  - {minute: "81'", player: Andersen, side: away, note: ""}
-background: null        # e.g. media/vejle/players/{slug}/1.jpg
+  - {minute: "81'", player: Becker, side: away, note: ""}
+background: null        # e.g. media/vfb/players/{slug}/1.jpg
 background_position: center top

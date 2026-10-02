@@ -1,8 +1,8 @@
 type: breaking-news
-club: vejle
+club: vfb
 date: "2026-10-01"
 kicker: null        # default: the club's "breaking" string
-headline: Vejle Boldklub præsenterer ny cheftræner
-body: Den 44-årige træner har skrevet under på en aftale frem til sommeren 2029 og leder sin første træning i morgen.
+headline: VfB Stuttgart präsentiert neuen Cheftrainer
+body: Der 44-jährige Trainer hat einen Vertrag bis Sommer 2029 unterschrieben und leitet morgen sein erstes Training.
 background: null    # photo path, or null for the club-colour gradient
 background_position: center top

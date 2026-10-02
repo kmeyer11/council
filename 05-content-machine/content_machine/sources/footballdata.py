@@ -2,8 +2,8 @@
 Auth header `X-Auth-Token`, free key from https://www.football-data.org/client/register.
 
 The free plan serves the current season, but only score, date, competition and
-round: goals, bookings and venue come back null, and domestic cups and the
-Superliga aren't covered. So `match` writes the post without goals and red
+round: goals, bookings and venue come back null, and domestic cups (DFB-Pokal)
+aren't covered. So `match` writes the post without goals and red
 cards (HAS_EVENTS) and someone fills those in from two other sources.
 """
 from __future__ import annotations
@@ -21,7 +21,7 @@ HAS_EVENTS = False
 # Team ids differ from API-Football's, so crests are cached under their own names.
 CREST_PREFIX = "fd-"
 # No team search endpoint; these are the free competitions our clubs play in.
-SEARCH_COMPETITIONS = ("PL", "CL")
+SEARCH_COMPETITIONS = ("BL1", "CL")
 
 # Written the way API-Football names rounds, so cli._round and the club yaml's
 # round_names work the same for both sources.
@@ -49,7 +49,7 @@ def _get(client: httpx.Client, path: str, params: Dict[str, Any] = None) -> Dict
         time.sleep(int(resp.headers.get("Retry-After", "6")))
         resp = client.get(path, params=params or {})
     if resp.status_code == 403:
-        raise RuntimeError(f"football-data.org {path}: not in the free plan (domestic cups and the Superliga aren't).")
+        raise RuntimeError(f"football-data.org {path}: not in the free plan (domestic cups like the DFB-Pokal aren't).")
     resp.raise_for_status()
     return resp.json()
 
@@ -77,13 +77,19 @@ def _round(m: Dict[str, Any]) -> str:
     return stage
 
 
+def competition_teams(client: httpx.Client, code: str) -> List[Dict[str, Any]]:
+    """Every team in a competition this season, e.g. code "BL1"."""
+    return [{"id": t["id"], "name": t["name"], "short_name": t.get("shortName", ""), "logo": t["crest"],
+             "country": (t.get("area") or {}).get("name", "")}
+            for t in _get(client, f"/competitions/{code}/teams").get("teams", [])]
+
+
 def search_teams(client: httpx.Client, name: str) -> List[Dict[str, Any]]:
     seen: Dict[int, Dict[str, Any]] = {}
     for code in SEARCH_COMPETITIONS:
-        for t in _get(client, f"/competitions/{code}/teams").get("teams", []):
-            if name.lower() in f"{t['name']} {t.get('shortName', '')}".lower():
-                seen[t["id"]] = {"id": t["id"], "name": t["name"], "logo": t["crest"],
-                                 "country": (t.get("area") or {}).get("name", "")}
+        for t in competition_teams(client, code):
+            if name.lower() in f"{t['name']} {t['short_name']}".lower():
+                seen[t["id"]] = t
     return list(seen.values())
 
 

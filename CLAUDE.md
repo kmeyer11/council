@@ -12,7 +12,7 @@ Built on ICM: folders carry sequencing, hierarchy carries context, files carry s
 | `02-vinted-watch/` | vinted.dk watcher: searches for anything matching your saved criteria (started as books, now any category), favourites and logs matches |
 | `03-website-making/` | brand assets (logos, fonts, images, colors, voice) reused across website projects, each project self-contained under `sites/` |
 | `04-job-search/` | tailors CV + cover letter to a specific job posting within your own rules, and watches Jobindex/Jobnet for new postings |
-| `05-content-machine/` | Instagram graphics for the Vejle Boldklub (DA) and Liverpool FC (EN) accounts: match results (agent lookup now, API-Football with a paid key), plus announcement templates (breaking news, statement, transfer, injury) |
+| `05-content-machine/` | Instagram graphics for the VfB Stuttgart account (DE, `@vfb.ross`): Bundesliga match results (agent lookup now, API-Football with a paid key) with club crests + competition logos, plus announcement templates (breaking news, statement, transfer, injury) |
 
 Full roster with status lives in `CONTEXT.md` — this table only routes.
 

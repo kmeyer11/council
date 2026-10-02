@@ -35,7 +35,7 @@ def _get(client: httpx.Client, path: str, params: Dict[str, Any]) -> List[Dict[s
 
 
 def _season(today: date) -> int:
-    # Both the Superliga and the PL start in July/August; API-Football names a
+    # The Bundesliga starts in August; API-Football names a
     # season by its starting year.
     return today.year if today.month >= 7 else today.year - 1
 

@@ -1,0 +1,68 @@
+# slug -> who it is. Photo: players/{slug}.jpg, or several in players/{slug}/
+# (one picked at random). Portrait crops, at least 1080 px wide.
+# aliases: how the API writes the name, if initial + surname doesn't already match.
+# display: name shown on graphics (default: name).
+#
+# beispiel-spieler:
+#   name: Beispiel Spieler
+#   number: 10
+#   aliases: ["B. Spieler"]
+#   display: Spieler
+
+# Starting XI vs Dortmund, 2026-09-19 (vfb.de). Photos go in players/{slug}/.
+
+f-bredlow:
+  name: Fabian Bredlow
+  number: 1
+  display: Bredlow
+
+j-vagnoman:
+  name: Josha Vagnoman
+  number: 4
+  display: Vagnoman
+
+a-stiller:
+  name: Angelo Stiller
+  number: 6
+  display: Stiller
+
+m-mittelstadt:
+  name: Maximilian Mittelstädt
+  number: 7
+  display: Mittelstädt
+
+e-demirovic:
+  name: Ermedin Demirovic
+  number: 9
+  display: Demirovic
+
+c-fuhrich:
+  name: Chris Führich
+  number: 10
+  display: Führich
+
+b-el-khannouss:
+  name: Bilal El Khannouss
+  number: 11
+  display: El Khannouss
+
+g-promel:
+  name: Grischa Prömel
+  number: 21
+  display: Prömel
+
+j-chabot:
+  name: Jeff Chabot
+  number: 24
+  aliases: ['Julian Chabot', 'J. Chabot']
+  display: Chabot
+
+d-undav:
+  name: Deniz Undav
+  number: 26
+  display: Undav
+
+f-jeltsch:
+  name: Finn Jeltsch
+  number: 29
+  display: Jeltsch

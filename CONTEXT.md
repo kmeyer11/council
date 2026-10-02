@@ -8,7 +8,7 @@ The unit here is a workspace, not a pipeline run. Each one is self-contained; th
 | 02 | `02-vinted-watch/` | searches vinted.dk for anything matching your saved criteria (books to start, any category now), favourites and logs matches | active, code working, cron not currently scheduled |
 | 03 | `03-website-making/` | brand assets (logos, fonts, images, colors, voice) shared across website projects, each project self-contained under `sites/` | active, assets not yet filled in |
 | 04 | `04-job-search/` | tailors CV + cover letter (.docx) to a job posting within your rules, and watches Jobindex/Jobnet for new postings | active, watch working; waiting on your CV/letter in `profile/`, cron not scheduled |
-| 05 | `05-content-machine/` | Instagram post graphics for two club accounts (Vejle Boldklub DA, Liverpool FC EN): match results via API-Football + announcement templates, rendered HTML→PNG | active, first match posts rendered; match data looked up by the agent (free API plan can't serve the current season) |
+| 05 | `05-content-machine/` | Instagram post graphics for the VfB Stuttgart account (DE): match results + announcement templates, rendered HTML→PNG | active, switched to VfB 2026-10-02, needs new photos; match data looked up by the agent (free API plan can't serve the current season) |
 
 `01` is a deliberate gap — the homelab workspace moved to its own repo,
 [`kmeyer11/homelab`](https://github.com/kmeyer11/homelab) (`~/Github/homelab`),
