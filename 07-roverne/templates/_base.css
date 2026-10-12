@@ -23,7 +23,7 @@ html, body { width: var(--w); height: var(--h); overflow: hidden; background: va
 
 /* The logo is a mask filled with currentColor, so one file works on light and dark backgrounds. */
 .logo {
-  display: block; flex: 0 0 auto; aspect-ratio: 1173 / 1218; background-color: currentColor;
+  display: block; flex: 0 0 auto; aspect-ratio: 1740 / 1220; background-color: currentColor;
   -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat;
 }
 .masthead .name { font: 800 40px/1 var(--font-display); letter-spacing: .06em; text-transform: uppercase; }

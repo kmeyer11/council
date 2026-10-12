@@ -19,12 +19,13 @@ Ask these together in one message. If the assistant has a question tool (e.g. Co
 
 Again in one message:
 
-1. **Hvad skal teksten fortælle?** Ask for keywords (stikord): what you'll do, who it's for, food, sleeping, price, anything practical. Offer to write the text from them.
+1. **Hvad skal teksten fortælle?** Ask for keywords (stikord): what you'll do, who it's for, food, sleeping, anything practical. Offer to write the text from them.
 2. **Skal de medbringe noget?** List or no → `bring` (4–6 short items fit).
-3. **Billede:** the forest background (default) or one of their own photos? List them with `photos` if they want their own → `photo`.
-4. **Formater:** options `post` (Instagram/Facebook), `story`, `a5` (flyer), `a4` (poster). Multiple choice. Default `[post, a5]`.
+3. **Tilmelding:** price, who to pay and the deadline, if any → `signup`, one short line (e.g. "100 kr. til Sigurd på 25 79 22 30 snarest"). Don't repeat it in `text`.
+4. **Billede:** the forest background (default) or one of their own photos? List them with `photos` if they want their own → `photo`.
+5. **Formater:** options `post` (Instagram/Facebook), `story`, `a5` (flyer), `a4` (poster). Multiple choice. Default `[post, a5]`.
 
-Don't ask about `subtitle` or `kicker`. Write a subtitle suggestion yourself. Keep `kicker: Invitation` unless the event is clearly something else (e.g. "Klanmøde", "Save the date").
+Don't ask about `subtitle` or `kicker`. Write a subtitle suggestion yourself. Keep `kicker: Invitation` unless the event is clearly something else (e.g. "Klanmøde", "Save the date"). Keep `closing: Vel mødt` unless the user wants another sign-off.
 
 ## 3. Write the draft
 

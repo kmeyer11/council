@@ -9,7 +9,7 @@
   .top { position: relative; flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 40px var(--pad) 116px; text-align: center; color: var(--light); }
   .shade { background: linear-gradient(180deg, rgba(8, 22, 12, .55) 0%, rgba(8, 22, 12, .42) 100%); }
   .masthead { flex-direction: column; gap: 10px; }
-  .masthead .logo { height: 88px; }
+  .masthead .logo { height: 96px; }
   .masthead .name { font-size: 34px; }
   .head { display: flex; flex-direction: column; align-items: center; gap: 18px; }
   .kicker { align-self: center; }
@@ -28,10 +28,14 @@
   .bring ul { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; margin-top: 14px; }
   .bring li { font: 500 24px/1.3 var(--font-body); padding: 0 0 10px 26px; position: relative; }
   .bring li::before { content: ""; position: absolute; left: 0; top: .42em; width: 11px; height: 11px; background: var(--accent); border-radius: 3px; }
+  .signup p { font: 600 27px/1.35 var(--font-body); margin-top: 10px; text-wrap: balance; }
 
   .facebook { width: 100%; margin-top: auto; border-top: 2px solid color-mix(in srgb, var(--dark) 12%, transparent); padding-top: 22px; }
   .facebook .how { font: 600 29px/1.3 var(--font-body); margin-top: 10px; }
   .facebook .note { font: 500 23px/1.35 var(--font-body); margin-top: 8px; }
+  /* Sign-off at the bottom; margin-top: auto pins it down when there's no Facebook footer to do that. */
+  .closing { margin-top: auto; font: 800 44px/1 var(--font-display); color: var(--primary); }
+  .facebook + .closing { margin-top: 0; }
 
   /* Story: keep the masthead and footer clear of Instagram's own UI at top and bottom. */
   .fmt-story .top { padding-top: 190px; }
@@ -87,6 +91,12 @@
     <ul>{% for item in piece.bring %}<li>{{ item }}</li>{% endfor %}</ul>
   </div>
   {% endif %}
+  {% if piece.get('signup') %}
+  <div class="signup">
+    <span class="label">Tilmelding</span>
+    <p>{{ piece.signup }}</p>
+  </div>
+  {% endif %}
   {% if fb %}
   <footer class="facebook">
     <span class="label">Begivenhed på Facebook</span>
@@ -94,5 +104,6 @@
     {% if fb.get('text') %}<p class="note">{{ fb.text }}</p>{% endif %}
   </footer>
   {% endif %}
+  {% if piece.get('closing', 'Vel mødt') %}<p class="closing">{{ piece.get('closing', 'Vel mødt') }}</p>{% endif %}
 </section>
 {% endblock %}
