@@ -31,7 +31,6 @@ Create `templates/{type}/template.html` (with `{% extends "_layout.html" %}`), `
 ## Human check
 
 - Date, time, place and the Facebook answer deadline, against the plan. The weekday is computed, so check the date itself.
-- Scan the QR code with a phone before sending it out: it must open the right Facebook event.
 - **Consent for every photo with people in it.** Ask before posting someone in a portrait-style photo, and never post someone who said no.
 
 ## Not built yet

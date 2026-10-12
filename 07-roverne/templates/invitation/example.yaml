@@ -23,8 +23,7 @@ bring:                    # optional list
   - Gode vandrestøvler
   - Madpakke til lørdag frokost
 
-facebook:                 # the Facebook event people answer in; leave out the whole block for no footer
-  link: https://www.facebook.com/events/123456789   # the event's URL, also printed as a QR code
+facebook:                 # footer pointing to the Facebook event people answer in; leave out the whole block for no footer
   deadline: "2026-11-01"  # optional: printed as "Svar senest søndag 1. november"
   text: null              # optional extra line, e.g. Find den i Røvernes gruppe
 

@@ -13,7 +13,7 @@ Ask these together in one message. If the assistant has a question tool (e.g. Co
 1. **Hvad er det?** What is the event? It becomes the `title` (short: 2–4 words fit best).
 2. **Hvornår?** Start date and time, and the end if it runs over several hours or days → `starts` / `ends`.
 3. **Hvor?** The place, plus an exact meeting point if there is one → `where` / `where_detail`.
-4. **Facebook-begivenhed?** The link to the event and an answer deadline, if there is one → `facebook.link` / `facebook.deadline`. If the event doesn't exist yet, leave `link: null` and say so in the hand-over: the QR code is missing until the link is added.
+4. **Facebook-begivenhed?** Is there one, and is there an answer deadline → `facebook.deadline`. No event → leave out the whole `facebook` block.
 
 ## 2. Second round: the content
 
@@ -45,4 +45,4 @@ Edit `source.yaml` and render again, until the user is happy. The yaml is the si
 
 ## 6. Hand-over
 
-Give the path to the folder in iCloud and the files in it. Remind them of the human check in `../../CONTEXT.md`: check the date against the plan, scan the QR code with a phone, and get consent for every photo with people in it.
+Give the path to the folder in iCloud and the files in it. Remind them of the human check in `../../CONTEXT.md`: check the date against the plan and get consent for every photo with people in it.
