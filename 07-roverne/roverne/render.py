@@ -14,7 +14,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional
 
-import segno
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 from . import dates
@@ -66,12 +65,6 @@ def _heic_to_jpg(src: Path) -> Path:
     return out
 
 
-def _qr(link: Optional[str], color: str) -> Optional[str]:
-    if not link:
-        return None
-    return segno.make(link, error="m").svg_data_uri(dark=color, light=None, border=0)
-
-
 def build_html(piece: Dict[str, Any], fmt: str) -> str:
     brand = load_brand()
     env = Environment(loader=FileSystemLoader(TEMPLATES_DIR), undefined=StrictUndefined, autoescape=True)
@@ -84,7 +77,6 @@ def build_html(piece: Dict[str, Any], fmt: str) -> str:
         asset=_asset,
         inline=_inline,
         when=dates.when,
-        qr=_qr,
         base_css=(TEMPLATES_DIR / "_base.css").as_uri(),
         width=WIDTH,
         height=FORMATS[fmt]["height"],
