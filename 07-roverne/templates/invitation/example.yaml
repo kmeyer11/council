@@ -1,0 +1,33 @@
+type: invitation
+slug: example
+kicker: Invitation        # small orange label above the title (default "Invitation")
+title: Hike i Rold Skov
+subtitle: To dage, én sovepose og en masse bål. Kom med!   # optional
+
+# Weekday, month and time are written by the template, so only dates go here.
+# "2026-11-07" for a day, "2026-11-07 10:00" for a day + time. `ends` is optional.
+starts: "2026-11-07 10:00"
+ends: "2026-11-08 14:00"
+
+where: Rold Skov
+where_detail: P-pladsen ved Store Økssø   # optional second line
+price: 150 kr.            # optional
+
+text: |
+  Vi går ca. 25 km over to dage og sover i shelter lørdag nat. Mad står vi for, du står for godt humør.
+
+bring:                    # optional list
+  - Sovepose og liggeunderlag
+  - Varmt tøj og regntøj
+  - Gode vandrestøvler
+  - Madpakke til lørdag frokost
+
+signup:                   # optional; leave out the whole block for no footer
+  deadline: "2026-11-01"  # date, or free text like "snarest"
+  how: Skriv til Kristian på 12 34 56 78
+  link: null              # optional URL; also printed as a QR code
+
+photo: null               # e.g. photos/hike-2025/bål.jpg (list them with `photos`)
+photo_position: center    # CSS object-position, e.g. "center 30%" to move the crop
+
+formats: [post, a5]       # post (1080×1350 PNG), story (1080×1920 PNG), a5 / a4 (PDF for print)

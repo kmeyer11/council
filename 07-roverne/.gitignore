@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+# Photos of people stay on this machine (consent is given for posting, not for GitHub).
+photos/*
+!photos/.gitkeep
