@@ -15,7 +15,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from .config import ROOT, TEMPLATES_DIR, output_dir
+from .config import TEMPLATES_DIR, media_dir, output_dir
 from .render import render
 
 log = logging.getLogger("roverne")
@@ -52,11 +52,12 @@ def cmd_render(args) -> None:
 
 def cmd_photos(args) -> None:
     # Lets the agent pick a photo by folder and file name without opening images.
-    photos = ROOT / "photos"
+    photos = media_dir()
+    if not photos.is_dir():
+        raise FileNotFoundError(f"{photos} (media_dir in config.yaml) does not exist.")
     for p in sorted(photos.rglob("*")):
-        # .converted/ holds the JPGs made from HEIC, not photos to pick from.
-        if p.suffix.lower() in PHOTO_TYPES and not p.relative_to(photos).parts[0].startswith("."):
-            print(p.relative_to(ROOT))
+        if p.suffix.lower() in PHOTO_TYPES | {".svg"}:
+            print(p.relative_to(photos))
 
 
 def main() -> None:
@@ -75,7 +76,7 @@ def main() -> None:
     p.add_argument("sources", nargs="+")
     p.set_defaults(func=cmd_render)
 
-    p = sub.add_parser("photos", help="List photos in photos/.")
+    p = sub.add_parser("photos", help="List the photos and logos in media_dir.")
     p.set_defaults(func=cmd_photos)
 
     args = parser.parse_args()

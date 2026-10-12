@@ -17,7 +17,7 @@ from typing import Any, Dict, Iterable, Optional
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 from . import dates
-from .config import ROOT, TEMPLATES_DIR, load_brand, load_yaml
+from .config import ROOT, TEMPLATES_DIR, load_brand, load_yaml, media_dir
 
 log = logging.getLogger("roverne")
 
@@ -34,9 +34,11 @@ FORMATS: Dict[str, Dict[str, Any]] = {
 
 def _resolve(path: str) -> Path:
     p = Path(path).expanduser()
-    p = p if p.is_absolute() else ROOT / p
+    if not p.is_absolute():
+        # Photos and logos come from media_dir; brand/ files that ship with the repo from ROOT.
+        p = next((d / p for d in (media_dir(), ROOT) if (d / p).exists()), media_dir() / p)
     if not p.exists():
-        raise FileNotFoundError(f"{path} not found (paths are relative to {ROOT.name}/ or absolute)")
+        raise FileNotFoundError(f"{path} not found (paths are relative to {media_dir()}, then {ROOT.name}/, or absolute)")
     if p.suffix.lower() == ".heic":
         p = _heic_to_jpg(p)
     return p
@@ -57,7 +59,7 @@ def _inline(path: Optional[str]) -> Optional[str]:
 
 def _heic_to_jpg(src: Path) -> Path:
     # iPhone photos are HEIC, which Chromium can't show. sips ships with macOS.
-    out = ROOT / "photos" / ".converted" / f"{src.stem}-{hashlib.sha1(str(src).encode()).hexdigest()[:8]}.jpg"
+    out = ROOT / ".converted" / f"{src.stem}-{hashlib.sha1(str(src).encode()).hexdigest()[:8]}.jpg"
     if not out.exists() or out.stat().st_mtime < src.stat().st_mtime:
         out.parent.mkdir(parents=True, exist_ok=True)
         subprocess.run(["sips", "-s", "format", "jpeg", str(src), "--out", str(out)],

@@ -2,3 +2,7 @@
 # the rendered PNG/PDF. iCloud Drive, so it syncs to the phone for sharing.
 # `~` keeps the path the same on every Mac signed in to the same iCloud account.
 output_dir: "~/Library/Mobile Documents/com~apple~CloudDocs/spejder/rover"
+
+# Where the photos to use live, in any subfolders. Kept outside the repo:
+# they are photos of real people. A relative `photo` is looked up here first.
+media_dir: "~/Resources/spejder/rover"
