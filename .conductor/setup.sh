@@ -14,7 +14,7 @@ if [[ "${CONDUCTOR_IS_LOCAL:-}" == "1" && -n "${CONDUCTOR_ROOT_PATH:-}" ]]; then
   done
 fi
 
-for ws in 02-vinted-watch 04-job-search 05-content-machine 06-match-predictor; do
+for ws in 02-vinted-watch 04-job-search 05-content-machine 06-match-predictor 07-roverne; do
   echo "== $ws"
   uv venv --quiet --allow-existing --python "$(command -v python3)" "$ws/.venv"
   uv pip install --quiet --python "$ws/.venv/bin/python" -r "$ws/requirements.txt"

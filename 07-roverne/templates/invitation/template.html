@@ -1,0 +1,84 @@
+{% extends "_layout.html" %}
+{% block head %}
+<style>
+  .hero { position: relative; flex: 1 1 auto; min-height: 380px; display: flex; flex-direction: column; justify-content: space-between; padding: 60px 72px 56px; }
+  /* No text-shadow anywhere: Chromium's PDF output turns it into grey boxes. The shade carries legibility instead. */
+  .hero.has-photo .shade { background: linear-gradient(180deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.1) 30%, rgba(0,0,0,.25) 50%, rgba(0,0,0,.78) 100%); }
+  .hero > :not(.bg):not(.shade) { position: relative; }
+  .hero-text { display: flex; flex-direction: column; gap: 22px; color: var(--light); }
+  .title { font: 800 124px/.94 var(--font-display); letter-spacing: -.02em; max-height: 240px; overflow: clip; overflow-clip-margin: 24px; text-wrap: balance; }
+  .subtitle { font: 500 36px/1.25 var(--font-body); max-width: 860px; text-wrap: balance; }
+
+  .info { flex: 0 0 auto; padding: 50px 72px 46px; display: flex; flex-direction: column; gap: 38px; }
+  .facts { display: grid; grid-template-columns: 1.35fr 1fr auto; gap: 40px; }
+  .fact { display: flex; flex-direction: column; gap: 12px; border-left: 5px solid var(--accent); padding-left: 22px; }
+  .fact .value { font: 700 36px/1.12 var(--font-display); }
+  .fact .sub { font: 500 24px/1.3 var(--font-body); opacity: .75; text-wrap: balance; }
+  .text { font: 400 30px/1.42 var(--font-body); white-space: pre-line; text-wrap: pretty; }
+  .bring ul { list-style: none; columns: 2; column-gap: 48px; margin-top: 18px; }
+  .bring li { font: 500 26px/1.3 var(--font-body); padding: 0 0 12px 30px; position: relative; break-inside: avoid; }
+  .bring li::before { content: ""; position: absolute; left: 0; top: .42em; width: 12px; height: 12px; background: var(--accent); border-radius: 3px; }
+
+  .signup { flex: 0 0 auto; background: var(--primary); color: var(--on-primary); padding: 40px 72px; display: flex; align-items: center; gap: 48px; }
+  .signup .label { color: var(--accent); }
+  .signup .how { font: 600 32px/1.3 var(--font-body); margin-top: 14px; }
+  .signup .link { font: 500 22px/1.3 var(--font-body); opacity: .75; margin-top: 10px; word-break: break-all; }
+  .signup .grow { flex: 1; }
+  .qr { flex: 0 0 auto; width: 176px; height: 176px; padding: 16px; background: var(--light); border-radius: 14px; }
+  .qr img { width: 100%; height: 100%; display: block; }
+
+  /* Story: keep the masthead and footer text clear of Instagram's own UI at top and bottom. */
+  .fmt-story .hero { padding-top: 220px; }
+  .fmt-story .title { font-size: 136px; max-height: 390px; }
+  .fmt-story .info { padding-bottom: 64px; gap: 48px; }
+  .fmt-story .signup { padding-bottom: 180px; }
+</style>
+{% endblock %}
+{% block canvas_class %}invitation{% endblock %}
+{% block content %}
+{%- set bg = asset(piece.get('photo')) %}
+{%- set w = when(piece.starts, piece.get('ends')) if piece.get('starts') else none %}
+{%- set signup = piece.get('signup') or {} %}
+<section class="hero{{ ' has-photo' if bg }}">
+  <div class="bg">{% if bg %}<img src="{{ bg }}" style="object-position: {{ piece.get('photo_position') or 'center' }}">{% endif %}</div>
+  <div class="shade"></div>
+  <header class="masthead">
+    {% if brand.get('logo') %}<img src="{{ asset(brand.logo) }}" alt="">{% endif %}
+    <div>
+      <div class="name">{{ brand.name }}</div>
+      {% if brand.get('tagline') %}<div class="tagline">{{ brand.tagline }}</div>{% endif %}
+    </div>
+  </header>
+  <div class="hero-text">
+    <div class="kicker">{{ piece.get('kicker') or 'Invitation' }}</div>
+    <h1 class="title fit">{{ piece.title }}</h1>
+    {% if piece.get('subtitle') %}<p class="subtitle">{{ piece.subtitle }}</p>{% endif %}
+  </div>
+</section>
+
+<section class="info">
+  <div class="facts">
+    {% if w %}<div class="fact"><span class="label">Hvornår</span><span class="value">{{ w.day }}</span>{% if w.time %}<span class="sub">{{ w.time }}</span>{% endif %}</div>{% endif %}
+    {% if piece.get('where') %}<div class="fact"><span class="label">Hvor</span><span class="value">{{ piece.where }}</span>{% if piece.get('where_detail') %}<span class="sub">{{ piece.where_detail }}</span>{% endif %}</div>{% endif %}
+    {% if piece.get('price') %}<div class="fact"><span class="label">Pris</span><span class="value">{{ piece.price }}</span></div>{% endif %}
+  </div>
+  {% if piece.get('text') %}<p class="text">{{ piece.text | trim }}</p>{% endif %}
+  {% if piece.get('bring') %}
+  <div class="bring">
+    <span class="label">Medbring</span>
+    <ul>{% for item in piece.bring %}<li>{{ item }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+</section>
+
+{% if signup %}
+<footer class="signup">
+  <div class="grow">
+    <span class="label">Tilmelding{% if signup.get('deadline') %} senest {{ signup.deadline | longdate }}{% endif %}</span>
+    {% if signup.get('how') %}<p class="how">{{ signup.how }}</p>{% endif %}
+    {% if signup.get('link') %}<p class="link">{{ signup.link | replace('https://', '') | replace('http://', '') }}</p>{% endif %}
+  </div>
+  {% if signup.get('link') %}<div class="qr"><img src="{{ qr(signup.link, brand.colors.dark) }}" alt=""></div>{% endif %}
+</footer>
+{% endif %}
+{% endblock %}

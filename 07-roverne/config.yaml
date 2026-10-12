@@ -1,0 +1,4 @@
+# Where finished media goes: one folder per piece, holding its source.yaml and
+# the rendered PNG/PDF. iCloud Drive, so it syncs to the phone for sharing.
+# `~` keeps the path the same on every Mac signed in to the same iCloud account.
+output_dir: "~/Library/Mobile Documents/com~apple~CloudDocs/spejder/rover"

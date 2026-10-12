@@ -1,0 +1,53 @@
+{#- Shared shell for every template: brand theme, canvas size, and the
+    text-fitting script render.py waits for. -#}
+{%- set c = brand.colors -%}
+{%- set f = brand.get('fonts') or {} -%}
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+{% if f.get('url') %}<link rel="stylesheet" href="{{ f.url }}">{% endif %}
+<link rel="stylesheet" href="{{ base_css }}">
+<style>
+  :root {
+    --w: {{ width }}px;
+    --h: {{ height }}px;
+    --primary: {{ c.primary }};
+    --on-primary: {{ c.on_primary }};
+    --accent: {{ c.accent }};
+    --dark: {{ c.dark }};
+    --light: {{ c.light }};
+    --font-display: "{{ f.get('display', 'Avenir Next') }}", "Avenir Next", sans-serif;
+    --font-body: "{{ f.get('body', 'Helvetica Neue') }}", "Helvetica Neue", Arial, sans-serif;
+  }
+</style>
+{% block head %}{% endblock %}
+</head>
+<body>
+<main class="canvas fmt-{{ fmt }} {% block canvas_class %}{% endblock %}">
+  {% block content %}{% endblock %}
+</main>
+<script>
+  // Shrink any .fit element until its text fits its box (long titles).
+  document.fonts.ready.then(() => {
+    document.querySelectorAll(".fit").forEach((el) => {
+      const style = getComputedStyle(el);
+      // Compare against max-height, not clientHeight: tall display glyphs
+      // overhang a tight line-height and would always read as overflow.
+      const maxHeight = style.maxHeight === "none" ? Infinity : parseFloat(style.maxHeight);
+      let size = parseFloat(style.fontSize);
+      const min = size * 0.4;
+      const overflows = () =>
+        el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > maxHeight + 1;
+      while (overflows() && size > min) {
+        size -= 2;
+        el.style.fontSize = size + "px";
+      }
+    });
+    const canvas = document.querySelector(".canvas");
+    window.__overflow = canvas.scrollHeight > canvas.clientHeight + 1;
+    window.__ready = true;
+  });
+</script>
+</body>
+</html>

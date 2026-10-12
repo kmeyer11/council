@@ -1,0 +1,18 @@
+# Røverne's look. Templates take every colour, font and name from here.
+# Colours are placeholders (forest green + campfire orange) until the real ones are decided.
+name: Røverne
+tagline: Roverklan   # small line under the name in the header (null to hide)
+
+colors:
+  primary: "#2F5D3A"     # forest green
+  on_primary: "#F5EFE3"  # text on top of primary
+  accent: "#E07A2E"      # campfire orange
+  dark: "#172A1E"
+  light: "#F5EFE3"       # paper
+
+fonts:
+  url: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Work+Sans:wght@400;500;600;700&display=swap"
+  display: Bricolage Grotesque
+  body: Work Sans
+
+logo: null   # e.g. brand/logo.png (transparent PNG or SVG), shown top left next to the name
