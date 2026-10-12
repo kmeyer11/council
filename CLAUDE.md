@@ -28,7 +28,7 @@ Full roster with status lives in `CONTEXT.md` — this table only routes.
 | tailoring an application to a job posting, changing application rules, or running the job watch | `04-job-search/CONTEXT.md` | read it, then `04-job-search/profile/` and the relevant `applications/{slug}/` or `config/criteria/` |
 | making a match-result or announcement post, or adding a club/post type | `05-content-machine/CONTEXT.md` | read it, then the relevant `clubs/{club}.yaml` and `templates/{type}/` |
 | predicting upcoming matches, or adding a league | `06-match-predictor/CONTEXT.md` | read it, then `match_predictor/config.py` for leagues |
-| making an invitation or other media for Røverne, or adding a template | `07-roverne/CONTEXT.md` | read it, then `07-roverne/brand/brand.yaml` and `templates/{type}/` |
+| making an invitation ("lav en invitation") or other media for Røverne, or adding a template | `07-roverne/CONTEXT.md` | read it, then follow `07-roverne/templates/{type}/opskrift.md` (it asks the user for the content) |
 | unsure how to comment/format code for any workspace here | `00-shared/conventions.md` | apply it, don't restate it elsewhere |
 | adding a new workspace to Council | copy the next free number + the shape of `02-vinted-watch/` | new folder gets its own `CONTEXT.md`, add a row here and in `CONTEXT.md` |
 

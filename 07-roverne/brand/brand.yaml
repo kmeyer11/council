@@ -1,7 +1,7 @@
 # Røverne's look. Templates take every colour, font and name from here.
 # Colours are placeholders (forest green + campfire orange) until the real ones are decided.
 name: Røverne
-tagline: Roverklan   # small line under the name in the header (null to hide)
+tagline: null   # small line under the name in the header, e.g. Roverklan (null to hide)
 
 colors:
   primary: "#2F5D3A"     # forest green
@@ -15,4 +15,5 @@ fonts:
   display: Bricolage Grotesque
   body: Work Sans
 
-logo: null   # e.g. brand/logo.png (transparent PNG or SVG), shown top left next to the name
+logo: brand/logo.png   # transparent PNG or SVG, one colour: templates recolour it to fit the background
+background: brand/skov.jpg   # blurred behind a piece that has no `photo` of its own
