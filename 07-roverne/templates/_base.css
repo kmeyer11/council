@@ -10,7 +10,7 @@ html, body { width: var(--w); height: var(--h); overflow: hidden; background: va
 
 /* Without a photo the background is brand green with faint contour lines. */
 .bg {
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; overflow: hidden;
   background:
     repeating-radial-gradient(circle at 82% 18%, transparent 0 46px, rgba(255,255,255,.07) 46px 48px),
     radial-gradient(ellipse at 80% 10%, color-mix(in srgb, var(--primary) 85%, white) 0%, var(--primary) 45%, var(--dark) 100%);
@@ -19,7 +19,13 @@ html, body { width: var(--w); height: var(--h); overflow: hidden; background: va
 .shade { position: absolute; inset: 0; }
 
 .masthead { display: flex; align-items: center; gap: 22px; color: var(--on-primary); }
-.masthead img { height: 92px; width: auto; }
+.masthead .logo { height: 92px; }
+
+/* The logo is a mask filled with currentColor, so one file works on light and dark backgrounds. */
+.logo {
+  display: block; flex: 0 0 auto; aspect-ratio: 1173 / 1218; background-color: currentColor;
+  -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat;
+}
 .masthead .name { font: 800 40px/1 var(--font-display); letter-spacing: .06em; text-transform: uppercase; }
 .masthead .tagline { font: 600 20px/1 var(--font-body); letter-spacing: .2em; text-transform: uppercase; opacity: .8; margin-top: 8px; }
 

@@ -19,6 +19,7 @@
     --light: {{ c.light }};
     --font-display: "{{ f.get('display', 'Avenir Next') }}", "Avenir Next", sans-serif;
     --font-body: "{{ f.get('body', 'Helvetica Neue') }}", "Helvetica Neue", Arial, sans-serif;
+    {% if brand.get('logo') %}--logo: url("{{ inline(brand.logo) }}");{% endif %}
   }
 </style>
 {% block head %}{% endblock %}

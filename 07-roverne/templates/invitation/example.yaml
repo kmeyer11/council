@@ -11,10 +11,11 @@ ends: "2026-11-08 14:00"
 
 where: Rold Skov
 where_detail: P-pladsen ved Store Økssø   # optional second line
-price: 150 kr.            # optional
 
 text: |
-  Vi går ca. 25 km over to dage og sover i shelter lørdag nat. Mad står vi for, du står for godt humør.
+  Vi går ca. 25 km gennem Danmarks største skov over to dage og sover i shelter ved søen lørdag nat. Undervejs laver vi mad over bål og tager en tur i det kolde vand for dem, der tør.
+
+  Mad står vi for, du står for godt humør. Turen er for alle i klanen, og du må gerne tage en ven med, der vil se hvad Røverne går ud på.
 
 bring:                    # optional list
   - Sovepose og liggeunderlag
@@ -22,12 +23,12 @@ bring:                    # optional list
   - Gode vandrestøvler
   - Madpakke til lørdag frokost
 
-signup:                   # optional; leave out the whole block for no footer
-  deadline: "2026-11-01"  # date, or free text like "snarest"
-  how: Skriv til Kristian på 12 34 56 78
-  link: null              # optional URL; also printed as a QR code
+facebook:                 # the Facebook event people answer in; leave out the whole block for no footer
+  link: https://www.facebook.com/events/123456789   # the event's URL, also printed as a QR code
+  deadline: "2026-11-01"  # optional: printed as "Svar senest søndag 1. november"
+  text: null              # optional extra line, e.g. Find den i Røvernes gruppe
 
-photo: null               # e.g. photos/hike-2025/bål.jpg (list them with `photos`)
+photo: null               # e.g. photos/hike-2025/bål.jpg (list them with `photos`); null = brand background
 photo_position: center    # CSS object-position, e.g. "center 30%" to move the crop
 
 formats: [post, a5]       # post (1080×1350 PNG), story (1080×1920 PNG), a5 / a4 (PDF for print)

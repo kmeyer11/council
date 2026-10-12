@@ -4,8 +4,10 @@ Every format is laid out on a 1080 px wide canvas. Print formats are then
 scaled down to paper size as PDF, so text stays sharp when printed."""
 from __future__ import annotations
 
+import base64
 import hashlib
 import logging
+import mimetypes
 import subprocess
 import tempfile
 from datetime import datetime
@@ -31,16 +33,27 @@ FORMATS: Dict[str, Dict[str, Any]] = {
 }
 
 
-def _asset(path: Optional[str]) -> Optional[str]:
-    if not path:
-        return None
+def _resolve(path: str) -> Path:
     p = Path(path).expanduser()
     p = p if p.is_absolute() else ROOT / p
     if not p.exists():
         raise FileNotFoundError(f"{path} not found (paths are relative to {ROOT.name}/ or absolute)")
     if p.suffix.lower() == ".heic":
         p = _heic_to_jpg(p)
-    return p.as_uri()
+    return p
+
+
+def _asset(path: Optional[str]) -> Optional[str]:
+    return _resolve(path).as_uri() if path else None
+
+
+def _inline(path: Optional[str]) -> Optional[str]:
+    # CSS masks (the recoloured logo) are fetched with CORS, which file:// URLs fail, so the file goes in as data.
+    if not path:
+        return None
+    p = _resolve(path)
+    mime = mimetypes.guess_type(p.name)[0] or "application/octet-stream"
+    return f"data:{mime};base64,{base64.b64encode(p.read_bytes()).decode()}"
 
 
 def _heic_to_jpg(src: Path) -> Path:
@@ -69,6 +82,7 @@ def build_html(piece: Dict[str, Any], fmt: str) -> str:
         brand=brand,
         fmt=fmt,
         asset=_asset,
+        inline=_inline,
         when=dates.when,
         qr=_qr,
         base_css=(TEMPLATES_DIR / "_base.css").as_uri(),
