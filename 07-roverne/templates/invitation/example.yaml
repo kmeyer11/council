@@ -31,7 +31,7 @@ facebook:                 # footer pointing to the Facebook event people answer 
 
 closing: Vel mødt         # sign-off at the bottom (default "Vel mødt"); "" for none
 
-photo: null               # e.g. photos/hike-2025/bål.jpg (list them with `photos`); null = brand background
+photo: null               # e.g. hike-2025/bål.jpg, relative to media_dir (list them with `photos`); null = brand background
 photo_position: center    # CSS object-position, e.g. "center 30%" to move the crop
 
 formats: [post, a5]       # post (1080×1350 PNG), story (1080×1920 PNG), a5 / a4 (PDF for print)

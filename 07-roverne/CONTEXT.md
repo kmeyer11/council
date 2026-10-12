@@ -4,9 +4,8 @@ Makes media for Røverne, a Danish rover clan (roverklan): invitations first, mo
 
 ## Inputs
 
-- `brand/brand.yaml`: name, tagline, colours, fonts, logo (`brand/logo.png`, one colour, recoloured per background), and `background` (`brand/skov.jpg`, blurred behind any piece without its own `photo`). Every template takes its look from here. **The colours are placeholders** until the user gives the real ones.
-- `config.yaml`: `output_dir`, the iCloud Drive folder finished media goes in. Written with `~` so it's the same on every Mac on the same iCloud account.
-- `photos/`: photos the user wants to use, in any subfolders (e.g. `photos/sommerlejr-2026/`). JPG, PNG, WebP or HEIC (straight from an iPhone; converted to JPG in `photos/.converted/` at render time). Gitignored: these are photos of real people.
+- `brand/brand.yaml`: name, tagline, colours, fonts, logo (`brand/logo.png`, the figure without the wordmark since the name is set as text; one colour, recoloured per background), and `background` (`brand/skov.jpg`, blurred behind any piece without its own `photo`). Every template takes its look from here. **The colours are placeholders** until the user gives the real ones.
+- `config.yaml`: `output_dir`, the iCloud Drive folder finished media goes in. Written with `~` so it's the same on every Mac on the same iCloud account. And `media_dir` (`~/Resources/spejder/rover`), the user's own folder of photos, in any subfolders (e.g. `sommerlejr-2026/`). JPG, PNG, WebP, SVG or HEIC (straight from an iPhone; converted to JPG in `.converted/` at render time). Outside the repo: these are photos of real people. A relative `photo` in a `source.yaml` is looked up there first, then in this folder.
 - `templates/{type}/example.yaml`: every field a template takes, with comments. `templates/{type}/template.html`: the layout. `templates/{type}/opskrift.md`: the recipe the agent follows to make one (questions to ask, then the draft).
 - Reference (every task): `../00-shared/conventions.md`
 
