@@ -6,6 +6,6 @@ __pycache__/
 .env
 # Personligt indhold - kun strukturen committes.
 profile/
-applications/
-state/
+applications
+state
 config/criteria/

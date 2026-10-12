@@ -5,7 +5,7 @@ __pycache__/
 .DS_Store
 .env
 # Product + photos stay local: photos are usually someone else's copyright.
-posts/
+posts
 media/*/players/
 media/*/loss/
 media/*/serious/
