@@ -15,7 +15,9 @@ The unit here is a workspace, not a pipeline run. Each one is self-contained; th
 since it needs to be clonable on its own onto homelab servers without the
 rest of Council. Not renumbered, to avoid re-pointing anything at `02`/`03`.
 
-`05` is a gap too — a retired workspace, removed 2026-10-15. Not renumbered either.
+`05` is a gap too — content-machine was removed 2026-10-15 and came back the
+same day as its own repo, [`kmeyer11/content-machine`](https://github.com/kmeyer11/content-machine)
+(`~/Github/content-machine`), for the BVB account `@bvb.immer.weiter` only. Not renumbered either.
 
 Factory (stable, shared by every workspace): `00-shared/conventions.md`
 Product (owned per-workspace): each folder's own contents — `02-vinted-watch/state/` for vinted-watch, `03-website-making/sites/` for website-making, `04-job-search/applications/` for job-search, `output_dir` in `07-roverne/config.yaml` (iCloud Drive) for roverne. Product folders are gitignored (roverne's is outside the repo), so using a workspace never creates a commit.
