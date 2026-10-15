@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C · Report — EPL predictor</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface); color: var(--ink); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  article { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .eyebrow { font-size: 13px; color: var(--muted); margin: 0 0 18px; }
+  h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.12; letter-spacing: -0.025em; margin: 0 0 18px; font-weight: 700; }
+  .hero { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; padding: 20px 0 28px; border-bottom: 1px solid var(--grid); }
+  .hero .n { font-size: 64px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+  .hero .l { color: var(--ink-2); max-width: 420px; }
+  section { padding: 40px 0 8px; border-bottom: 1px solid var(--grid); }
+  section:last-of-type { border-bottom: 0; }
+  h2 { font-size: 22px; letter-spacing: -0.01em; margin: 0 0 6px; }
+  p { margin: 0 0 16px; color: var(--ink-2); }
+  .fig { margin: 18px 0 24px; }
+  .note { font-size: 13px; color: var(--muted); }
+  .stepper { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; }
+  .stepper button { background: none; border: 1px solid var(--border); color: var(--ink); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font: inherit; }
+  .stepper button:disabled { opacity: 0.3; cursor: default; }
+  .stepper span { min-width: 56px; text-align: center; font-variant-numeric: tabular-nums; }
+  .row-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+  td, th { padding: 9px 6px; border-bottom: 1px solid var(--grid); text-align: left; }
+  th { font-size: 12px; font-weight: 500; color: var(--muted); }
+  td.c, th.c { text-align: center; }
+  .split { font-size: 12px; color: var(--muted); }
+  .who { display: inline-flex; align-items: center; gap: 8px; }
+  .rules td:first-child { font-weight: 700; width: 56px; }
+</style>
+</head>
+<body>
+<article>
+  <p class="eyebrow" id="eyebrow"></p>
+  <h1 id="headline"></h1>
+  <div class="hero"><span class="n" id="hero-n"></span><span class="l" id="hero-l"></span></div>
+
+  <section>
+    <h2>Who's ahead, and could it be luck?</h2>
+    <p>Average points per match over every replayed season. The bar around each model is the 95% range for its gap to the leader: if it reaches the leader's line, the gap could be luck.</p>
+    <div class="fig" id="dots"></div>
+  </section>
+
+  <section>
+    <div class="row-head">
+      <h2>How a season plays out</h2>
+      <div class="stepper"><button id="prev" aria-label="Previous season">‹</button><span id="season"></span><button id="next" aria-label="Next season">›</button></div>
+    </div>
+    <p>Points gained or lost against the bookmakers, match week by match week. Above zero means beating the market.</p>
+    <div id="legend-race"></div>
+    <div class="fig" id="race"></div>
+  </section>
+
+  <section>
+    <h2>Season by season</h2>
+    <p>Each row is one season; each dot a model's points per match. The order changes a lot from year to year, which is why one season is never enough to judge a model.</p>
+    <div id="legend-strip"></div>
+    <div class="fig" id="strip"></div>
+  </section>
+
+  <section>
+    <h2>Bet for points, not for the likeliest score</h2>
+    <p>The same models, scored two ways. Grey: betting the single likeliest score. Colour: betting the score with the most expected points. The gap is free points.</p>
+    <div class="fig" id="pick"></div>
+  </section>
+
+  <section>
+    <h2 id="round-title"></h2>
+    <p>The bets the real models have saved for this round. Where they split, one of them will be wrong.</p>
+    <table id="bets"></table>
+  </section>
+
+  <section>
+    <h2>How points work</h2>
+    <p>The plshowet rules, used for every number on this page.</p>
+    <table class="rules">
+      <tr><td>9</td><td>Exact score</td><td class="note">bet 3–1, ends 3–1</td></tr>
+      <tr><td>4</td><td>Right outcome and goal difference</td><td class="note">bet 3–1, ends 2–0 · bet 1–1, ends 2–2</td></tr>
+      <tr><td>3</td><td>Right outcome</td><td class="note">bet 3–1, ends 3–0</td></tr>
+      <tr><td>0</td><td>Wrong outcome</td><td class="note">bet 3–1, ends 2–2</td></tr>
+    </table>
+  </section>
+</article>
+
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script>
+const { D, slot, fmt, dot, swatch, legend, lineChart, race, tooltip, byName } = EPLMock;
+const B = D.backtest;
+const board = B.leaderboard;
+const leader = board[0];
+const best = board.find((r) => !byName[r.model].benchmark);
+const perSeason = Math.round((leader.ptsPerMatch - best.ptsPerMatch) * 380);
+
+document.getElementById("eyebrow").textContent =
+  `EPL predictor · ${B.matches.toLocaleString()} matches, ${fmt.season(B.seasons[0])} to ${fmt.season(B.seasons.at(-1))} · updated ${D.generatedAt}`;
+document.getElementById("headline").textContent =
+  `The bookmakers lead. ${best.model} is the best of our models, ${perSeason} points a season behind.`;
+document.getElementById("hero-n").textContent = fmt.pts(best.ptsPerMatch);
+document.getElementById("hero-l").textContent =
+  `points per match for ${best.model}: about ${Math.round(best.ptsPerMatch * 380)} over a full season, against ${Math.round(leader.ptsPerMatch * 380)} for the ${leader.model}.`;
+
+function hover(el) {
+  el.addEventListener("pointermove", (e) => { const t = e.target.closest("[data-tip]"); tooltip(t ? t.dataset.tip : null, e.clientX, e.clientY); });
+  el.addEventListener("pointerleave", () => tooltip(null));
+}
+
+// 1. Dot plot with the gap interval drawn around each model's own dot.
+function dots() {
+  const el = document.getElementById("dots");
+  const W = el.clientWidth, rowH = 40, pad = { l: 120, r: 70, t: 8, b: 26 };
+  const H = pad.t + board.length * rowH + pad.b;
+  const lo = Math.min(...board.map((r) => r.ptsPerMatch - r.ci95)) - 0.05;
+  const hi = leader.ptsPerMatch + 0.08;
+  const x = (v) => pad.l + ((v - lo) / (hi - lo)) * (W - pad.l - pad.r);
+  const ticks = [];
+  for (let t = Math.ceil(lo * 10) / 10; t <= hi; t += 0.1) ticks.push(+t.toFixed(1));
+  el.innerHTML = `<svg width="${W}" height="${H}">
+    ${ticks.map((t) => `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${pad.t}" y2="${H - pad.b}"/><text class="axis" x="${x(t)}" y="${H - 8}" text-anchor="middle">${t.toFixed(1)}</text>`).join("")}
+    <line x1="${x(leader.ptsPerMatch)}" x2="${x(leader.ptsPerMatch)}" y1="${pad.t}" y2="${H - pad.b}" stroke="var(--ink-2)" stroke-dasharray="3 3"/>
+    ${board.map((r, i) => {
+      const y = pad.t + i * rowH + rowH / 2, c = slot[r.model].color;
+      const range = r === leader ? "" : `<line x1="${x(r.ptsPerMatch - r.ci95)}" x2="${x(r.ptsPerMatch + r.ci95)}" y1="${y}" y2="${y}" stroke="${c}" stroke-width="2" stroke-linecap="round" opacity=".55"/>`;
+      const tip = r === leader ? `${r.model}: ${fmt.pts3(r.ptsPerMatch)} pts/match (leader)` : `${r.model}: ${fmt.pts3(r.ptsPerMatch)} pts/match · gap ${fmt.signed(r.diffToBest)} ± ${r.ci95.toFixed(2)}`;
+      return `<g data-tip="${tip}"><rect x="0" y="${y - rowH / 2}" width="${W}" height="${rowH}" fill="transparent"/>
+        <text x="${pad.l - 14}" y="${y + 4}" text-anchor="end" style="font-size:13px;fill:var(--ink)">${r.model}</text>
+        ${range}<circle cx="${x(r.ptsPerMatch)}" cy="${y}" r="6" ${dot(r.model)}/>
+        <text x="${W - pad.r + 10}" y="${y + 4}" style="font-size:13px;fill:var(--ink-2)">${fmt.pts(r.ptsPerMatch)}</text></g>`;
+    }).join("")}
+  </svg>`;
+  hover(el);
+}
+
+// 2. Season race against the market, one season at a time.
+let idx = B.seasons.length - 2;
+function drawRace() {
+  const y = B.seasons[idx];
+  document.getElementById("season").textContent = fmt.season(y);
+  document.getElementById("prev").disabled = idx === 0;
+  document.getElementById("next").disabled = idx === B.seasons.length - 1;
+  const { series, labels } = race(y, "market");
+  const shown = series.filter((s) => s.model !== "market");
+  document.getElementById("legend-race").innerHTML = legend(shown.map((s) => s.model));
+  lineChart(document.getElementById("race"), { series: shown, labels, height: 260, zeroLine: true, yFormat: (v) => (v > 0 ? "+" : "") + Math.round(v), tipValue: (v) => `${v > 0 ? "+" : ""}${v} pts vs market` });
+}
+document.getElementById("prev").onclick = () => { idx--; drawRace(); };
+document.getElementById("next").onclick = () => { idx++; drawRace(); };
+
+// 3. Dot strip: seasons as rows.
+function strip() {
+  const el = document.getElementById("strip");
+  const W = el.clientWidth, rowH = 28, pad = { l: 56, r: 16, t: 4, b: 24 };
+  const ys = B.seasons.slice().reverse();
+  const names = D.models.map((m) => m.name);
+  const vals = ys.flatMap((y) => names.map((m) => B.bySeason[y][m]));
+  const lo = Math.floor(Math.min(...vals) * 10) / 10, hi = Math.ceil(Math.max(...vals) * 10) / 10;
+  const x = (v) => pad.l + ((v - lo) / (hi - lo)) * (W - pad.l - pad.r);
+  const H = pad.t + ys.length * rowH + pad.b;
+  const ticks = [];
+  for (let t = lo; t <= hi + 1e-9; t += 0.2) ticks.push(+t.toFixed(1));
+  document.getElementById("legend-strip").innerHTML = legend(names);
+  el.innerHTML = `<svg width="${W}" height="${H}">
+    ${ticks.map((t) => `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${pad.t}" y2="${H - pad.b}"/><text class="axis" x="${x(t)}" y="${H - 6}" text-anchor="middle">${t.toFixed(1)}</text>`).join("")}
+    ${ys.map((y, i) => {
+      const cy = pad.t + i * rowH + rowH / 2;
+      const v = names.map((m) => B.bySeason[y][m]);
+      return `<text class="axis" x="${pad.l - 12}" y="${cy + 4}" text-anchor="end">${fmt.season(y)}</text>
+        <line x1="${x(Math.min(...v))}" x2="${x(Math.max(...v))}" y1="${cy}" y2="${cy}" stroke="var(--grid)" stroke-width="2"/>
+        ${names.map((m) => `<circle data-tip="${m} · ${fmt.season(y)}: ${fmt.pts(B.bySeason[y][m])} pts/match" cx="${x(B.bySeason[y][m])}" cy="${cy}" r="5" ${dot(m)}/>`).join("")}`;
+    }).join("")}
+  </svg>`;
+  hover(el);
+}
+
+// 4. Paired bars: likeliest score vs best bet.
+function pick() {
+  const el = document.getElementById("pick");
+  const W = el.clientWidth, rowH = 46, pad = { l: 120, r: 60 };
+  const H = board.length * rowH;
+  const max = Math.max(...board.map((r) => r.ptsPerMatch));
+  const x = (v) => (v / max) * (W - pad.l - pad.r);
+  el.innerHTML = `<svg width="${W}" height="${H}">
+    ${board.map((r, i) => {
+      const y = i * rowH + 6;
+      return `<g data-tip="${r.model}: ${fmt.pts(r.ptsPerMatchLikeliest)} → ${fmt.pts(r.ptsPerMatch)} pts/match (+${Math.round((r.ptsPerMatch - r.ptsPerMatchLikeliest) * 380)} a season)">
+        <text x="${pad.l - 14}" y="${y + 18}" text-anchor="end" style="font-size:13px;fill:var(--ink)">${r.model}</text>
+        <rect x="${pad.l}" y="${y}" width="${x(r.ptsPerMatchLikeliest)}" height="12" rx="2" fill="var(--axis)"/>
+        <rect x="${pad.l}" y="${y + 16}" width="${x(r.ptsPerMatch)}" height="12" rx="2" fill="${slot[r.model].color}"/>
+        <text x="${pad.l + x(r.ptsPerMatchLikeliest) + 6}" y="${y + 10}" class="axis">${fmt.pts(r.ptsPerMatchLikeliest)}</text>
+        <text x="${pad.l + x(r.ptsPerMatch) + 6}" y="${y + 26}" style="fill:var(--ink-2)">${fmt.pts(r.ptsPerMatch)}</text></g>`;
+    }).join("")}
+  </svg>`;
+  hover(el);
+}
+
+// 5. This round.
+const U = D.upcoming;
+const real = D.models.filter((m) => !m.benchmark).map((m) => m.name);
+document.getElementById("round-title").textContent = `${U.round}: this weekend's bets`;
+document.getElementById("bets").innerHTML = `
+  <tr><th>Match</th>${real.map((m) => `<th class="c"><span class="who">${swatch(m)}${m}</span></th>`).join("")}<th></th></tr>
+  ${U.fixtures.map((f) => {
+    const picks = real.map((m) => f.bets[m].pick.join("–"));
+    return `<tr><td>${f.home} – ${f.away}</td>${picks.map((p) => `<td class="c"><b>${p}</b></td>`).join("")}
+      <td class="split">${new Set(picks).size > 1 ? "split" : ""}</td></tr>`;
+  }).join("")}`;
+
+function render() { dots(); drawRace(); strip(); pick(); }
+render();
+window.addEventListener("resize", render);
+</script>
+</body>
+</html>

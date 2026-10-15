@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A · Dashboard — EPL predictor</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+  header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+  h1 { font-size: 20px; margin: 0; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-2); font-size: 13px; }
+  .theme { background: none; border: 1px solid var(--border); color: var(--ink-2); border-radius: 6px; padding: 4px 10px; font: inherit; font-size: 12px; cursor: pointer; }
+
+  .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; min-width: 0; }
+  .card h2 { font-size: 14px; margin: 0 0 2px; }
+  .card .hint { color: var(--muted); font-size: 12px; margin: 0 0 12px; }
+  .span-3 { grid-column: span 3; } .span-5 { grid-column: span 5; } .span-7 { grid-column: span 7; } .span-12 { grid-column: span 12; }
+  @media (max-width: 900px) { .span-3 { grid-column: span 6; } .span-5, .span-7 { grid-column: span 12; } }
+
+  .tile .label { color: var(--ink-2); font-size: 13px; }
+  .tile .value { font-size: 28px; font-weight: 600; margin: 4px 0 2px; letter-spacing: -0.02em; }
+  .tile .delta { font-size: 12px; color: var(--muted); }
+  .tile .delta b { color: var(--good); font-weight: 600; }
+
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th { text-align: left; font-weight: 500; color: var(--muted); font-size: 12px; padding: 6px 8px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  td { padding: 8px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  .num { text-align: right; }
+  .model { display: inline-flex; align-items: center; gap: 8px; }
+  .tag { font-size: 11px; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; margin-left: 4px; }
+  .barcell { width: 32%; }
+  .bar { display: flex; align-items: center; gap: 8px; }
+  .bar i { display: block; height: 12px; border-radius: 0 4px 4px 0; }
+
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .seg button { background: none; border: 0; padding: 4px 10px; font: inherit; font-size: 12px; color: var(--ink-2); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--grid); color: var(--ink); font-weight: 600; }
+  .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+
+  .heat td { text-align: center; padding: 0; border: 2px solid var(--surface); }
+  .heat td.cell { height: 30px; min-width: 46px; font-size: 12px; border-radius: 4px; }
+  .heat td.name { text-align: left; padding-right: 10px; border: 0; }
+  .heat th { text-align: center; border: 0; }
+  .heat td.strong { color: #fff; }
+  :root[data-theme="dark"] .heat td.strong { color: #0b0b0b; }
+  @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .heat td.strong { color: #0b0b0b; } }
+
+  .bets td.pick { font-weight: 600; text-align: center; }
+  .bets .when { color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>EPL predictor</h1>
+      <div class="sub" id="sub"></div>
+    </div>
+    <button class="theme" id="theme">Toggle dark</button>
+  </header>
+
+  <div class="grid">
+    <div class="card tile span-3" id="t1"></div>
+    <div class="card tile span-3" id="t2"></div>
+    <div class="card tile span-3" id="t3"></div>
+    <div class="card tile span-3" id="t4"></div>
+
+    <section class="card span-12">
+      <h2>Leaderboard</h2>
+      <p class="hint">Average plshowet points per match in the backtest. Every model bet on the same matches.</p>
+      <div style="overflow-x:auto"><table id="board"></table></div>
+    </section>
+
+    <section class="card span-12">
+      <div class="card-head">
+        <div>
+          <h2>Season race</h2>
+          <p class="hint" style="margin:0" id="race-hint"></p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="seg" id="mode"><button data-m="gap" aria-pressed="true">Gap to market</button><button data-m="total" aria-pressed="false">Total points</button></div>
+          <div class="seg" id="seasons"></div>
+        </div>
+      </div>
+      <div id="legend-race" style="margin-bottom:8px"></div>
+      <div id="race"></div>
+    </section>
+
+    <section class="card span-12">
+      <h2>Points per match, by season</h2>
+      <p class="hint">No model wins every season. Fewer points
+        <span style="display:inline-flex;gap:2px;vertical-align:middle;margin:0 4px"><i style="width:14px;height:10px;border-radius:2px;background:var(--seq-1)"></i><i style="width:14px;height:10px;border-radius:2px;background:var(--seq-2)"></i><i style="width:14px;height:10px;border-radius:2px;background:var(--seq-3)"></i><i style="width:14px;height:10px;border-radius:2px;background:var(--seq-4)"></i><i style="width:14px;height:10px;border-radius:2px;background:var(--seq-5)"></i></span>
+        more points</p>
+      <div style="overflow-x:auto"><table class="heat" id="heat"></table></div>
+    </section>
+
+    <section class="card span-12">
+      <h2 id="next-title"></h2>
+      <p class="hint">Each model's bet: the score with the most expected points. Benchmarks left out: baseline bets 2-1 every time, and market needs odds that don't exist yet.</p>
+      <div style="overflow-x:auto"><table class="bets" id="bets"></table></div>
+    </section>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script>
+const { D, slot, fmt, swatch, legend, lineChart, race, tooltip } = EPLMock;
+const B = D.backtest;
+const board = B.leaderboard;
+const leader = board[0];
+const bestReal = board.find((r) => !EPLMock.byName[r.model].benchmark);
+const seasons = B.seasons;
+
+document.getElementById("sub").textContent =
+  `Backtest ${fmt.season(seasons[0])} – ${fmt.season(seasons.at(-1))} · ${B.matches.toLocaleString()} matches · updated ${D.generatedAt}`;
+
+const tile = (id, label, value, delta) =>
+  (document.getElementById(id).innerHTML = `<div class="label">${label}</div><div class="value">${value}</div><div class="delta">${delta}</div>`);
+tile("t1", "Leader", leader.model, `${fmt.pts3(leader.ptsPerMatch)} pts/match · ${Math.round(leader.ptsPerMatch * 380)} per season`);
+tile("t2", "Best real model", bestReal.model, `${fmt.signed(bestReal.diffToBest)} vs ${leader.model} (± ${bestReal.ci95.toFixed(2)})`);
+const gain = bestReal.ptsPerMatch - bestReal.ptsPerMatchLikeliest;
+tile("t3", "Betting for points, not the likeliest score", `+${gain.toFixed(2)}`, `pts/match for ${bestReal.model} · <b>+${Math.round(gain * 380)}</b> per season`);
+tile("t4", "Next round", D.upcoming.round, `${D.upcoming.fixtures.length} matches · bets saved for live tracking`);
+
+// Leaderboard with an inline bar (pts/match) and a whisker for the gap to #1.
+const maxPts = Math.max(...board.map((r) => r.ptsPerMatch));
+const minGap = Math.min(...board.map((r) => r.diffToBest - r.ci95));
+const whisker = (r) => {
+  const w = 120, s = (v) => w - ((v - 0) / (minGap || -1)) * (w - 8) - 4;
+  if (r === leader) return `<span style="color:var(--muted)">leader</span>`;
+  return `<svg width="${w}" height="14" aria-label="${fmt.signed(r.diffToBest)} ± ${r.ci95.toFixed(2)}">
+    <line x1="${s(0)}" x2="${s(0)}" y1="0" y2="14" stroke="var(--axis)"/>
+    <line x1="${s(r.diffToBest - r.ci95)}" x2="${Math.min(s(r.diffToBest + r.ci95), w)}" y1="7" y2="7" stroke="${slot[r.model].color}" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="${s(r.diffToBest)}" cy="7" r="4" fill="${slot[r.model].color}" class="ring"/></svg>
+    <span style="color:var(--ink-2);font-size:12px">${fmt.signed(r.diffToBest)}</span>`;
+};
+document.getElementById("board").innerHTML = `
+  <thead><tr><th>#</th><th>Model</th><th>Pts/match</th><th>Gap to #1 (95%)</th><th class="num">Pts/season</th>
+  <th class="num">Exact</th><th class="num">Outcome</th><th class="num">Margin</th><th class="num">RPS</th></tr></thead>
+  <tbody>${board.map((r, i) => `<tr>
+    <td>${i + 1}</td>
+    <td><span class="model">${swatch(r.model)}${r.model}${EPLMock.byName[r.model].benchmark ? '<span class="tag">benchmark</span>' : ""}</span></td>
+    <td class="barcell"><div class="bar"><i style="width:${(r.ptsPerMatch / maxPts) * 70}%;background:${slot[r.model].color}"></i>${fmt.pts3(r.ptsPerMatch)}</div></td>
+    <td>${whisker(r)}</td>
+    <td class="num">${Math.round(r.ptsPerMatch * 380)}</td>
+    <td class="num">${r.exactPct.toFixed(1)}%</td><td class="num">${r.outcomePct.toFixed(1)}%</td>
+    <td class="num">${r.marginPct.toFixed(1)}%</td><td class="num">${r.rps.toFixed(3)}</td></tr>`).join("")}</tbody>`;
+
+// Season race with a season picker (last five seasons).
+const segEl = document.getElementById("seasons");
+const recent = seasons.slice(-5);
+let current = seasons.at(-2);
+let mode = "gap";
+function drawRace() {
+  segEl.innerHTML = recent.map((y) => `<button aria-pressed="${y === current}" data-y="${y}">${fmt.season(y)}</button>`).join("");
+  document.querySelectorAll("#mode button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.m === mode));
+  const gap = mode === "gap";
+  document.getElementById("race-hint").textContent = gap
+    ? "Points ahead of (or behind) the bookmakers, as the season goes."
+    : "Running points total through the season.";
+  const { series, labels } = race(current, gap ? "market" : null);
+  document.getElementById("legend-race").innerHTML = legend(series.map((s) => s.model));
+  lineChart(document.getElementById("race"), {
+    series, labels, height: 300, zeroLine: gap,
+    yFormat: (v) => Math.round(v),
+    tipValue: (v) => (gap ? `${v > 0 ? "+" : ""}${v} pts` : `${v} pts`),
+  });
+}
+segEl.addEventListener("click", (e) => { if (e.target.dataset.y) { current = +e.target.dataset.y; drawRace(); } });
+document.getElementById("mode").addEventListener("click", (e) => { if (e.target.dataset.m) { mode = e.target.dataset.m; drawRace(); } });
+
+// Heatmap: one sequential hue, cells labelled because they fit.
+const order = board.map((r) => r.model);
+const vals = seasons.flatMap((y) => order.map((m) => B.bySeason[y][m]));
+const lo = Math.min(...vals), hi = Math.max(...vals);
+const step = (v) => Math.min(5, 1 + Math.floor(((v - lo) / (hi - lo)) * 5));
+document.getElementById("heat").innerHTML = `
+  <tr><th></th>${seasons.map((y) => `<th>${fmt.season(y)}</th>`).join("")}</tr>
+  ${order.map((m) => `<tr><td class="name"><span class="model">${swatch(m)}${m}</span></td>${seasons.map((y) => {
+    const v = B.bySeason[y][m], s = step(v);
+    return `<td class="cell ${s >= 3 ? "strong" : ""}" data-tip="${m} · ${fmt.season(y)}: ${fmt.pts(v)} pts/match" style="background:var(--seq-${s})">${fmt.pts(v)}</td>`;
+  }).join("")}</tr>`).join("")}`;
+document.getElementById("heat").addEventListener("pointermove", (e) => {
+  const t = e.target.closest("[data-tip]");
+  tooltip(t ? t.dataset.tip : null, e.clientX, e.clientY);
+});
+document.getElementById("heat").addEventListener("pointerleave", () => tooltip(null));
+
+// Next round: one row per fixture, one column per model that can bet live.
+const U = D.upcoming;
+document.getElementById("next-title").textContent = `${U.round} — this round's bets`;
+const live = D.models.filter((m) => !m.benchmark).map((m) => m.name);
+document.getElementById("bets").innerHTML = `
+  <thead><tr><th>Match</th><th>Kickoff (UTC)</th>${live.map((m) => `<th style="text-align:center"><span class="model">${swatch(m)}${m}</span></th>`).join("")}
+  <th></th><th>Dixon-Coles: home / draw / away</th></tr></thead>
+  <tbody>${U.fixtures.map((f) => {
+    const dc = f.bets["dixon-coles"];
+    const picks = new Set(live.map((m) => f.bets[m].pick.join("-")));
+    return `<tr><td>${f.home} – ${f.away}</td><td class="when">${fmt.kickoff(f.kickoff)}</td>
+      ${live.map((m) => `<td class="pick">${f.bets[m].pick.join("-")}</td>`).join("")}
+      <td class="when">${picks.size > 1 ? "models split" : "same bet"}</td>
+      <td style="color:var(--ink-2)">${fmt.pct(dc.pH)} / ${fmt.pct(dc.pD)} / ${fmt.pct(dc.pA)}</td></tr>`;
+  }).join("")}</tbody>`;
+
+document.getElementById("theme").addEventListener("click", () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme === "dark" || (!root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  root.dataset.theme = dark ? "light" : "dark";
+  location.hash = root.dataset.theme;
+  render();
+});
+if (location.hash === "#dark" || location.hash === "#light") document.documentElement.dataset.theme = location.hash.slice(1);
+function render() { drawRace(); }
+render();
+window.addEventListener("resize", drawRace);
+</script>
+</body>
+</html>
