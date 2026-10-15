@@ -12,7 +12,6 @@ Built on ICM: folders carry sequencing, hierarchy carries context, files carry s
 | `02-vinted-watch/` | vinted.dk watcher: searches for anything matching your saved criteria (started as books, now any category), favourites and logs matches |
 | `03-website-making/` | brand assets (logos, fonts, images, colors, voice) reused across website projects, each project self-contained under `sites/` |
 | `04-job-search/` | tailors CV + cover letter to a specific job posting within your own rules, and watches Jobindex/Jobnet for new postings |
-| `05-content-machine/` | Instagram graphics for the VfB Stuttgart account (DE, `@vfb.ross`): Bundesliga match results (agent lookup now, API-Football with a paid key) with club crests + competition logos, plus announcement templates (breaking news, statement, transfer, injury) |
 | `06-match-predictor/` | football match predictor CLI (Dixon-Coles model) for the next round of a league, adjusted for team news |
 | `07-roverne/` | media for Røverne (Danish rover clan): invitation templates rendered to PNG/PDF from your own photos, saved to an iCloud folder |
 
@@ -26,7 +25,6 @@ Full roster with status lives in `CONTEXT.md` — this table only routes.
 | running vinted-watch, or adding a new search topic/theme | `02-vinted-watch/CONTEXT.md` | read it, then `02-vinted-watch/config/topics/` and `config/criteria/` |
 | adding/updating a brand asset, or starting/building a website | `03-website-making/CONTEXT.md` | read it, then `03-website-making/assets/` and the relevant `sites/{slug}/` |
 | tailoring an application to a job posting, changing application rules, or running the job watch | `04-job-search/CONTEXT.md` | read it, then `04-job-search/profile/` and the relevant `applications/{slug}/` or `config/criteria/` |
-| making a match-result or announcement post, or adding a club/post type | `05-content-machine/CONTEXT.md` | read it, then the relevant `clubs/{club}.yaml` and `templates/{type}/` |
 | predicting upcoming matches, or adding a league | `06-match-predictor/CONTEXT.md` | read it, then `match_predictor/config.py` for leagues |
 | making an invitation ("lav en invitation") or other media for Røverne, or adding a template | `07-roverne/CONTEXT.md` | read it, then follow `07-roverne/templates/{type}/opskrift.md` (it asks the user for the content) |
 | unsure how to comment/format code for any workspace here | `00-shared/conventions.md` | apply it, don't restate it elsewhere |
