@@ -18,13 +18,14 @@ Do NOT load: asset binaries (images, fonts) as text — reference them by path, 
 
 1. **Adding/updating a brand asset**: drop the file in the right `assets/` subfolder, then update `assets/brand.md` with the facts about it (hex codes, font family/weight, usage rule) if they're not obvious from the filename alone.
 2. **Starting a new website — mockup gate, before anything else**: no backend, data wiring, auth, or API calls until a design direction is approved. Produce the mockup(s) with the `design` skill (a visual canvas — draft a few artboards as different approaches side by side, the user clicks/edits/compares) unless a plain static page is a better fit, in which case hand-write static HTML/CSS into `sites/{slug}/mockups/` instead. Either way: front-end only, fake/placeholder content is fine, nothing wired to real data. Ask explicitly which direction to run with (or whether to iterate) before moving on — don't infer approval from silence or from "looks good" about something else.
-3. **After approval**: create/continue `sites/{slug}/`, pull what's needed from `assets/` (reference it directly, or copy in if the build needs a local copy — say which and why). Framework/stack choice lives in that site's own folder, not here. The approved mockup is the reference for how the real build should look — check back against it, don't drift.
+3. **After approval**: create/continue `sites/{slug}/` (create `sites/` first if it's missing — it's gitignored, so a fresh clone has none), pull what's needed from `assets/` (reference it directly, or copy in if the build needs a local copy — say which and why). Framework/stack choice lives in that site's own folder, not here. The approved mockup is the reference for how the real build should look — check back against it, don't drift.
 4. **Building/editing a site**: work inside `sites/{slug}/`. Treat `assets/` as the single source of truth for brand material — don't let a second, drifting copy of a logo or color value accumulate inside a site folder.
 
 ## Outputs
 
 - `sites/{slug}/mockups/` — design explorations, kept even after approval as a record of what was chosen and what was passed over
 - `sites/{slug}/` — each website project's actual code and content
+- `sites/` is gitignored: mockups and sites are never committed, so using this workspace leaves no diff. A site that others should get moves to its own repo (as epl-predictor did), and its `sites/{slug}/` keeps the mockups and a pointer.
 - `assets/` stays reference-only; it's not generated or modified by any site's build output
 
 ## Human check

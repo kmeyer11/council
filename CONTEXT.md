@@ -18,7 +18,7 @@ rest of Council. Not renumbered, to avoid re-pointing anything at `02`/`03`.
 `05` is a gap too — a retired workspace, removed 2026-10-15. Not renumbered either.
 
 Factory (stable, shared by every workspace): `00-shared/conventions.md`
-Product (owned per-workspace): each folder's own contents — `02-vinted-watch/state/` for vinted-watch, `03-website-making/sites/` for website-making, `04-job-search/applications/` for job-search, `output_dir` in `07-roverne/config.yaml` (iCloud Drive) for roverne.
+Product (owned per-workspace): each folder's own contents — `02-vinted-watch/state/` for vinted-watch, `03-website-making/sites/` for website-making, `04-job-search/applications/` for job-search, `output_dir` in `07-roverne/config.yaml` (iCloud Drive) for roverne. Product folders are gitignored (roverne's is outside the repo), so using a workspace never creates a commit.
 
 Status is whatever exists: a workspace is active once it has its own `CONTEXT.md` and at least one real file underneath — not just a placeholder.
 
