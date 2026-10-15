@@ -21,6 +21,7 @@ Full roster with status lives in `CONTEXT.md` — this table only routes.
 | If | Go to | Then stop at |
 |---|---|---|
 | doing homelab work (debug, add a service, check setup) | [`~/Github/homelab`](https://github.com/kmeyer11/homelab) (its own repo, own `CONTEXT.md`) | not part of Council — cloned separately |
+| making a BVB Instagram post (match result, breaking news, statement, transfer, injury) for `@bvb.immer.weiter` | [`~/Github/content-machine`](https://github.com/kmeyer11/content-machine) (its own repo, own `CONTEXT.md`) | not part of Council — cloned separately |
 | running vinted-watch, or adding a new search topic/theme | `02-vinted-watch/CONTEXT.md` | read it, then `02-vinted-watch/config/topics/` and `config/criteria/` |
 | adding/updating a brand asset, or starting/building a website | `03-website-making/CONTEXT.md` | read it, then `03-website-making/assets/` and the relevant `sites/{slug}/` |
 | tailoring an application to a job posting, changing application rules, or running the job watch | `04-job-search/CONTEXT.md` | read it, then `04-job-search/profile/` and the relevant `applications/{slug}/` or `config/criteria/` |
