@@ -6,7 +6,7 @@ export PATH="/opt/homebrew/bin:$PATH"
 # Output folders point back to the main checkout, so results made in a
 # workspace survive archiving it.
 if [[ "${CONDUCTOR_IS_LOCAL:-}" == "1" && -n "${CONDUCTOR_ROOT_PATH:-}" ]]; then
-  for dir in 02-vinted-watch/state 04-job-search/applications 04-job-search/state; do
+  for dir in 02-vinted-watch/state 03-website-making/sites 04-job-search/applications 04-job-search/state; do
     mkdir -p "$CONDUCTOR_ROOT_PATH/$dir"
     if [[ ! -e "$dir" ]]; then
       ln -s "$CONDUCTOR_ROOT_PATH/$dir" "$dir"

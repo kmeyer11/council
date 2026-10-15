@@ -1,5 +1,5 @@
 # Gitignored inputs copied into each new Conductor workspace.
-# Output folders (state/, applications/, posts/, data/) are symlinked by .conductor/setup.sh instead.
+# Output folders (state/, applications/, sites/) are symlinked by .conductor/setup.sh instead.
 .env
 /.claude/settings.local.json
 /02-vinted-watch/config/

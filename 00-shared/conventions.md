@@ -16,4 +16,4 @@ only on non-obvious WHY, never on WHAT.
 
 ## Anything else that's true everywhere
 
-{Fill in as it comes up. One rule per bullet; link out to a longer file if a topic grows past a few lines.}
+- Workspace output (sites, mockups, applications, state, renders) goes in a gitignored folder or outside the repo. Only code, templates, config structure and docs are committed, so using a workspace never creates a commit.
