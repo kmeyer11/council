@@ -9,6 +9,7 @@ The unit here is a workspace, not a pipeline run. Each one is self-contained; th
 | 03 | `03-website-making/` | brand assets (logos, fonts, images, colors, voice) shared across website projects, each project self-contained under `sites/` | active, assets not yet filled in |
 | 04 | `04-job-search/` | tailors CV + cover letter (.docx) to a job posting within your rules, and watches Jobindex/Jobnet for new postings | active, watch working; waiting on your CV/letter in `profile/`, cron not scheduled |
 | 07 | `07-roverne/` | media for Røverne (Danish rover clan): invitations rendered HTML→PNG/PDF into an iCloud folder | active, added 2026-10-12; output in iCloud `spejder/rover`, needs real colours and photos |
+| 08 | `08-presentations/` | PowerPoint decks (.pptx) from saved styles; each deck keeps a frozen copy of its style so added slides match | active, added 2026-10-19; one style (`clean`), previews via Keynote |
 
 `01` is a deliberate gap — the homelab workspace moved to its own repo,
 [`kmeyer11/homelab`](https://github.com/kmeyer11/homelab) (`~/Github/homelab`),
@@ -20,7 +21,7 @@ same day as its own repo, [`kmeyer11/content-machine`](https://github.com/kmeyer
 (`~/Github/content-machine`), for the BVB account `@bvb.immer.weiter` only. Not renumbered either.
 
 Factory (stable, shared by every workspace): `00-shared/conventions.md`
-Product (owned per-workspace): each folder's own contents — `02-vinted-watch/state/` for vinted-watch, `03-website-making/sites/` for website-making, `04-job-search/applications/` for job-search, `output_dir` in `07-roverne/config.yaml` (iCloud Drive) for roverne. Product folders are gitignored (roverne's is outside the repo), so using a workspace never creates a commit.
+Product (owned per-workspace): each folder's own contents — `02-vinted-watch/state/` for vinted-watch, `03-website-making/sites/` for website-making, `04-job-search/applications/` for job-search, `output_dir` in `07-roverne/config.yaml` (iCloud Drive) for roverne, `08-presentations/decks/` for presentations. Product folders are gitignored (roverne's is outside the repo), so using a workspace never creates a commit.
 
 Status is whatever exists: a workspace is active once it has its own `CONTEXT.md` and at least one real file underneath — not just a placeholder.
 
