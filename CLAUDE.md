@@ -13,6 +13,7 @@ Built on ICM: folders carry sequencing, hierarchy carries context, files carry s
 | `03-website-making/` | brand assets (logos, fonts, images, colors, voice) reused across website projects, each project self-contained under `sites/` |
 | `04-job-search/` | tailors CV + cover letter to a specific job posting within your own rules, and watches Jobindex/Jobnet for new postings |
 | `07-roverne/` | media for Røverne (Danish rover clan): invitation templates rendered to PNG/PDF from your own photos, saved to an iCloud folder |
+| `08-presentations/` | PowerPoint decks built from saved styles; each deck keeps its own style file so later slides match |
 
 Full roster with status lives in `CONTEXT.md` — this table only routes.
 
@@ -26,6 +27,7 @@ Full roster with status lives in `CONTEXT.md` — this table only routes.
 | adding/updating a brand asset, or starting/building a website | `03-website-making/CONTEXT.md` | read it, then `03-website-making/assets/` and the relevant `sites/{slug}/` |
 | tailoring an application to a job posting, changing application rules, or running the job watch | `04-job-search/CONTEXT.md` | read it, then `04-job-search/profile/` and the relevant `applications/{slug}/` or `config/criteria/` |
 | making an invitation ("lav en invitation") or other media for Røverne, or adding a template | `07-roverne/CONTEXT.md` | read it, then follow `07-roverne/templates/{type}/opskrift.md` (it asks the user for the content) |
+| making a PowerPoint/presentation, adding slides to one, or defining a new style | `08-presentations/CONTEXT.md` | read it, then `styles/` and, for an existing deck, its `decks/{folder}/style.md` and `deck.yaml` |
 | unsure how to comment/format code for any workspace here | `00-shared/conventions.md` | apply it, don't restate it elsewhere |
 | adding a new workspace to Council | copy the next free number + the shape of `02-vinted-watch/` | new folder gets its own `CONTEXT.md`, add a row here and in `CONTEXT.md` |
 
