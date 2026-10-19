@@ -145,6 +145,11 @@ def flatten_bullets(items: List[Any]) -> List[Tuple[str, int]]:
     for item in items or []:
         if isinstance(item, dict):
             for head, subs in item.items():
+                # An unquoted "Key: value" bullet parses as a mapping to a scalar,
+                # not to sub-points; put the text back together.
+                if subs is not None and not isinstance(subs, list):
+                    out.append((f"{head}: {subs}", 0))
+                    continue
                 out.append((str(head), 0))
                 out.extend((str(s), 1) for s in subs or [])
         else:
