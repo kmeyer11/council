@@ -42,6 +42,8 @@ def load_style(path: Path) -> Dict[str, Any]:
     missing = [c for c in REQUIRED_COLORS if c not in colors]
     if missing:
         raise ValueError(f"{path}: colors is missing {missing}.")
+    # Column headings sit on `surface`; primary only reads there when the style is light.
+    colors.setdefault("heading", colors["primary"])
     style["colors"] = colors
     style["dir"] = path.parent
     return style

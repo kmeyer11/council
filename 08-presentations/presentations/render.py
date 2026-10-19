@@ -347,7 +347,7 @@ def column(slide, box: Box, d: Dict[str, Any], ctx: Ctx) -> None:
     inner_y = y + pad
     if d.get("heading"):
         text(slide, (x + pad, inner_y, w - 2 * pad, 0.5), d["heading"], ctx, size=ctx.s["heading"],
-             color=ctx.c["primary"], font=ctx.f["heading"], name="Column heading")
+             color=ctx.c["heading"], font=ctx.f["heading"], name="Column heading")
         inner_y += 0.75
     bullets(slide, (x + pad, inner_y, w - 2 * pad, y + h - pad - inner_y), d.get("bullets"), ctx,
             size=ctx.s["body"] - 1, intro=d.get("text", ""))
