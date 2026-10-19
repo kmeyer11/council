@@ -1,0 +1,104 @@
+# Every layout once, with every field it reads. `sample {style}` renders this
+# to judge a style; copy a block from here when writing a deck.yaml.
+# Every slide also takes `notes:` (speaker notes, shown in presenter view).
+# **word** makes a word bold anywhere text is allowed.
+title: Eksempel på stilen
+author: ""
+slug: sample
+slides:
+  - layout: title
+    kicker: Eksempel          # optional, small caps above the title
+    title: Sådan ser stilen ud
+    subtitle: Alle layouts én gang, med eksempeltekst
+    byline: Navn · 19. oktober 2026
+    notes: Speaker notes står her og vises kun i presenter view.
+
+  - layout: agenda
+    title: Agenda
+    items:                     # up to 10; two columns after 5
+      - Hvorfor vi er her
+      - Hvad vi har lært
+      - Tre muligheder
+      - Tallene
+      - Næste skridt
+
+  - layout: section
+    number: "01"               # optional
+    title: Hvorfor vi er her
+    subtitle: En sektion åbner hvert større emne   # optional
+
+  - layout: bullets
+    title: En slide har ét budskab
+    text: Kort intro over punkterne   # optional
+    bullets:
+      - Titlen siger budskabet, ikke emnet
+      - Højst fem punkter, gerne færre
+      - Underpunkter skrives sådan:
+          - kort og konkret
+          - højst to
+      - Ord med **fed** fremhæves sparsomt
+
+  - layout: bullets
+    title: Punkter med billede
+    image: images/sample.png   # relative to the deck folder; bleeds off the right edge
+    bullets:
+      - Billedet beskæres til at fylde højre side
+      - Teksten bliver smallere, så hold den kort
+
+  - layout: two-column
+    title: To sider af sagen
+    left:
+      heading: Før
+      bullets: [Manuelt arbejde, Mange mails, Ingen overblik]
+    right:
+      heading: Efter
+      text: En kolonne kan have tekst, punkter eller begge.   # optional
+      bullets: [Ét sted at se status, Færre mails]
+
+  - layout: cards
+    title: Tre muligheder
+    numbered: true             # 01/02/03 above each card; or set `number:` per card
+    cards:                     # 1-4
+      - heading: Gør ingenting
+        text: Billigst nu, dyrest om et år.
+      - heading: Byg selv
+        text: Fuld kontrol, men tager tre måneder.
+      - heading: Køb færdigt
+        text: Klar i morgen, men låst til én leverandør.
+
+  - layout: stats
+    title: Tallene taler
+    stats:                     # 1-4
+      - value: 42 %
+        label: færre fejl efter skiftet
+      - value: 3,5 t
+        label: sparet om ugen per person
+      - value: "12"
+        label: teams bruger det i dag
+    text: Målt over de første tre måneder   # optional
+    source: "Kilde: intern måling, sep. 2026"   # optional
+
+  - layout: image
+    title: Et billede med forklaring
+    text: Kort tekst ved siden af billedet.     # optional
+    caption: Foto, kilde eller sted             # optional
+    image: images/sample.png   # leave out title (or set full: true) for a full-bleed photo
+
+  - layout: quote
+    quote: Et citat fylder en hel slide, så vælg et der er værd at huske.
+    by: Navn, rolle
+
+  - layout: table
+    title: Sammenligning
+    columns: [Mulighed, Pris, Tid, Risiko]
+    rows:                      # up to 8
+      - [Gør ingenting, 0 kr., "-", Høj]
+      - [Byg selv, 400.000 kr., 3 mdr., Mellem]
+      - [Køb færdigt, 120.000 kr./år, 1 uge, Lav]
+
+  - layout: closing
+    title: Tak
+    subtitle: Spørgsmål?
+    contact:                   # optional; a string or a list of lines
+      - navn@example.com
+      - 12 34 56 78
