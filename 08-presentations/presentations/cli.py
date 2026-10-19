@@ -2,9 +2,9 @@
 
 Usage (from the workspace folder):
     python -m presentations.cli styles
-    python -m presentations.cli new --style clean --slug kvartalsmoede
+    python -m presentations.cli new --style bold --slug kvartalsmoede
     python -m presentations.cli render decks/2026-10-19-kvartalsmoede/deck.yaml
-    python -m presentations.cli sample clean
+    python -m presentations.cli sample bold
 """
 from __future__ import annotations
 

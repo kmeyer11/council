@@ -1,19 +1,19 @@
 # presentations
 
-Makes PowerPoint decks (.pptx) in a saved style. A **style** is a reusable look: colours, fonts, sizes, motif, and rules for writing slides. A **deck** is one presentation. It gets its own frozen copy of the style, so slides added months later still match, even if the style has changed since.
+Makes PowerPoint decks (.pptx). A **style** is a look: colours, fonts, sizes, motif, and rules for writing slides. There is one base style, `bold`. A **deck** is one presentation. It starts from a copy of `bold`, and that copy is tailored to the talk (colours, fonts, footer, mood). The copy is the only style the deck reads, so slides added months later still match, even if `bold` has changed since.
 
 ## Inputs
 
-- `styles/{name}/style.md`: one reusable style. YAML front matter is what the renderer reads (colours, fonts, sizes, `motif`, `footer`, `logo`). The Markdown body is what you read before writing slides: mood, when to use it, rules. A logo or other file the style uses sits next to it.
+- `styles/bold/style.md`: the base style every deck starts from. YAML front matter is what the renderer reads (colours, fonts, sizes, `motif`, `footer`, `logo`). The Markdown body is what you read before writing slides: mood, when to use it, rules. A logo or other file the style uses sits next to it.
 - `decks/{date}-{slug}/`: one deck (gitignored output).
-  - `style.md`: a copy of the style, made by `new`. It is the only style file this deck reads. Its `## This deck` section records purpose, audience, language, theme and every choice made while building. **Read it before adding slides.**
+  - `style.md`: a copy of `bold`, made by `new`, then tailored to this deck. It is the only style file this deck reads. Its `## This deck` section records purpose, audience, language, theme and every choice made while building. **Read it before adding slides.**
   - `deck.yaml`: the slides. The single source of truth for the content.
   - `images/`: photos used by this deck.
   - `{slug}.pptx`, `preview/slide-NN.png`: built by `render`. Don't edit them.
 - `presentations/sample.yaml`: every layout once, with every field it takes. Copy blocks from here when writing a `deck.yaml`.
 - Reference (every task): `../00-shared/conventions.md`
 
-Brand colours already defined elsewhere (e.g. Røverne in `../03-website-making/assets/brand.md`) can be copied into a new style. Don't link to them: a style must stand alone.
+Brand colours already defined elsewhere (e.g. Røverne in `../03-website-making/assets/brand.md`) can be copied into a deck's `style.md`. Don't link to them: a style must stand alone.
 
 Do NOT load images or the .pptx as text. Look at `preview/*.png` to see a deck.
 
@@ -21,21 +21,17 @@ Do NOT load images or the .pptx as text. Look at `preview/*.png` to see a deck.
 
 All commands run from this folder with `.venv/bin/python -m presentations.cli …`. Setup once: `uv venv .venv && uv pip install --python .venv/bin/python -r requirements.txt` (Conductor's setup script does this). Talk to the user in their language (usually Danish).
 
-### Defining a style ("lav en stil")
-
-1. Ask, in one message: what it's for (work, school, a club, a pitch), the mood (calm, bold, playful), colours or a brand to take them from, a logo, and fonts if they care.
-2. Copy `styles/clean/` to `styles/{name}/` and change the front matter and body. Keep fonts that ship with both macOS and Windows (Arial, Georgia, Verdana, Trebuchet MS, Times New Roman) unless the user names others. A .pptx shows its fonts only if the computer it's shown on has them.
-3. `sample {name}` renders every layout to `decks/_samples/{name}/`. Look at every PNG in `preview/`, fix what's off, and show the user.
-4. The user approves the style. Don't build decks on a style they haven't seen.
-
 ### Making a deck ("lav en powerpoint/præsentation")
 
-1. `styles` lists the styles. Ask which one, unless it's obvious. Ask about purpose, audience, length (minutes) and language, and for the content: notes, a document, or keywords.
-2. `new --style {name} --slug {short-name} --title "…"` creates the folder.
-3. Fill in `## This deck` in the deck's `style.md` first, then write `deck.yaml`. Roughly 1 slide per 1.5–2 minutes. Follow the style's rules. Vary layouts. Put what the speaker says in `notes`, not on the slide.
-4. Every fact (numbers, names, dates) must come from the user's material. If one is missing, ask.
-5. `render decks/{folder}`. Fix every `WARNING` (text that probably overflows), then look at every PNG in `preview/`. Fix and render again.
-6. Show the user the previews and the path to the .pptx, plus a list of what you wrote yourself, so they can change it.
+1. Ask, in one message: purpose, audience, length (minutes), language, the content (notes, a document, or keywords), and the look: mood, colours or a brand to take them from, a logo, and fonts if they care.
+2. `new --style bold --slug {short-name} --title "…"` creates the folder with a copy of `bold`.
+3. Tailor the deck's `style.md` to the talk: change front matter values (colours, fonts, sizes, `motif`, `footer`, `logo`) and the body's Mood and Rules where they no longer fit. Keep fonts that ship with both macOS and Windows (Arial, Georgia, Verdana, Trebuchet MS, Times New Roman) unless the user names others; a .pptx shows its fonts only if the computer it's shown on has them. With a dark `background`, set `colors.heading` to a light colour, or column headings disappear.
+4. Fill in `## This deck`. Under Decisions, list what changed from `bold` and why.
+5. Write a `deck.yaml` with just the title slide and two or three content slides, `render`, and show the user the look before writing the rest.
+6. Write the rest of `deck.yaml`. Roughly 1 slide per 1.5–2 minutes. Follow the deck's style rules. Vary layouts. Put what the speaker says in `notes`, not on the slide.
+7. Every fact (numbers, names, dates) must come from the user's material. If one is missing, ask.
+8. `render decks/{folder}`. Fix every `WARNING` (text that probably overflows), then look at every PNG in `preview/`. Fix and render again.
+9. Show the user the previews and the path to the .pptx, plus a list of what you wrote yourself, so they can change it.
 
 ### Adding slides to a deck later
 
@@ -46,9 +42,13 @@ All commands run from this folder with `.venv/bin/python -m presentations.cli �
 
 If `render` says the .pptx was changed after the last render, the user edited it in PowerPoint. Ask what they changed, move it into `deck.yaml` (or `style.md`), then render with `--force`. Don't just force it: their edits would be lost.
 
-### Changing a style
+### Changing a deck's look
 
-Edit `styles/{name}/style.md` and run `sample {name}`. Existing decks keep their own copy and don't change. To bring a deck along, copy the changed values into that deck's `style.md` by hand.
+Edit that deck's `style.md`, note the change under Decisions, and `render`.
+
+### Changing the base style
+
+Edit `styles/bold/style.md` and run `sample bold`, which renders every layout to `decks/_samples/bold/`. Look at every PNG and show the user. Existing decks keep their own copy and don't change.
 
 ## Outputs
 
