@@ -1,15 +1,16 @@
 # presentations
 
-Makes PowerPoint decks (.pptx). A **style** is a look: colours, fonts, sizes, motif, and rules for writing slides. There is one base style, `bold`. A **deck** is one presentation. It starts from a copy of `bold`, and that copy is tailored to the talk (colours, fonts, footer, mood). The copy is the only style the deck reads, so slides added months later still match, even if `bold` has changed since.
+Makes PowerPoint decks (.pptx). The finished .pptx goes on the Desktop. Its source stays here in Council, so the deck can be changed and rendered again later. A **style** is a look: colours, fonts, sizes, motif, and rules for writing slides. There is one base style, `bold`. A **deck** is one presentation. It starts from a copy of `bold`, and that copy is tailored to the talk (colours, fonts, footer, mood). The copy is the only style the deck reads, so slides added months later still match, even if `bold` has changed since.
 
 ## Inputs
 
 - `styles/bold/style.md`: the base style every deck starts from. YAML front matter is what the renderer reads (colours, fonts, sizes, `motif`, `footer`, `logo`). The Markdown body is what you read before writing slides: mood, when to use it, rules. A logo or other file the style uses sits next to it.
-- `decks/{date}-{slug}/`: one deck (gitignored output).
+- `decks/{date}-{slug}/`: one deck's source (gitignored).
   - `style.md`: a copy of `bold`, made by `new`, then tailored to this deck. It is the only style file this deck reads. Its `## This deck` section records purpose, audience, language, theme and every choice made while building. **Read it before adding slides.**
   - `deck.yaml`: the slides. The single source of truth for the content.
   - `images/`: photos used by this deck.
-  - `{slug}.pptx`, `preview/slide-NN.png`: built by `render`. Don't edit them.
+  - `preview/slide-NN.png`: built by `render`. Don't edit them.
+  - `.rendered`: hash of the last render. It is how `render` sees edits made in PowerPoint.
 - `presentations/sample.yaml`: every layout once, with every field it takes. Copy blocks from here when writing a `deck.yaml`.
 - Reference (every task): `../00-shared/conventions.md`
 
@@ -31,7 +32,7 @@ All commands run from this folder with `.venv/bin/python -m presentations.cli â€
 6. Write the rest of `deck.yaml`. Roughly 1 slide per 1.5â€“2 minutes. Follow the deck's style rules. Vary layouts. Put what the speaker says in `notes`, not on the slide.
 7. Every fact (numbers, names, dates) must come from the user's material. If one is missing, ask.
 8. `render decks/{folder}`. Fix every `WARNING` (text that probably overflows), then look at every PNG in `preview/`. Fix and render again.
-9. Show the user the previews and the path to the .pptx, plus a list of what you wrote yourself, so they can change it.
+9. Show the user the previews and the path to the .pptx on the Desktop, plus a list of what you wrote yourself, so they can change it.
 
 ### Adding slides to a deck later
 
@@ -40,7 +41,7 @@ All commands run from this folder with `.venv/bin/python -m presentations.cli â€
 3. If you made a new choice (a new layout, a new kind of image), add it under `Decisions` in `## This deck`.
 4. `render`, look at the previews as in step 5 above.
 
-If `render` says the .pptx was changed after the last render, the user edited it in PowerPoint. Ask what they changed, move it into `deck.yaml` (or `style.md`), then render with `--force`. Don't just force it: their edits would be lost.
+If `render` says the .pptx on the Desktop was changed after the last render, the user edited it in PowerPoint. Ask what they changed, move it into `deck.yaml` (or `style.md`), then render with `--force`. Don't just force it: their edits would be lost.
 
 ### Changing a deck's look
 
@@ -48,14 +49,14 @@ Edit that deck's `style.md`, note the change under Decisions, and `render`.
 
 ### Changing the base style
 
-Edit `styles/bold/style.md` and run `sample bold`, which renders every layout to `decks/_samples/bold/`. Look at every PNG and show the user. Existing decks keep their own copy and don't change.
+Edit `styles/bold/style.md` and run `sample bold`, which renders every layout to `decks/_samples/bold/` (not the Desktop). Look at every PNG and show the user. Existing decks keep their own copy and don't change.
 
 ## Outputs
 
-- `decks/{date}-{slug}/{slug}.pptx`: open in PowerPoint or Keynote, or upload to Google Slides.
+- `~/Desktop/{slug}.pptx`: open in PowerPoint or Keynote, or upload to Google Slides. If a file with that name is already there and wasn't rendered from this deck, `render` stops. Rename the file, or change `slug` in `deck.yaml`.
 - `decks/{date}-{slug}/preview/slide-NN.png`: Keynote's rendering, for checking. PowerPoint can differ slightly.
 
-`decks/` is gitignored, so using this workspace never creates a commit. In Conductor workspaces it is a symlink to the main checkout, so decks survive archiving a workspace.
+`decks/` is gitignored and the .pptx sits outside the repo, so using this workspace never creates a commit. In Conductor workspaces it is a symlink to the main checkout, so decks survive archiving a workspace.
 
 ## Human check
 
