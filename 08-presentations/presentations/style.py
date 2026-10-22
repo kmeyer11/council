@@ -11,6 +11,8 @@ ROOT = Path(__file__).resolve().parent.parent
 STYLES_DIR = ROOT / "styles"
 DECKS_DIR = ROOT / "decks"
 SAMPLE_DECK = ROOT / "presentations" / "sample.yaml"
+# Finished .pptx files go where the user finds them; the deck folder keeps the source.
+OUTPUT_DIR = Path.home() / "Desktop"
 
 REQUIRED_COLORS = ("background", "surface", "text", "muted", "primary", "on_primary", "accent")
 

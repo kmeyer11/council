@@ -585,7 +585,8 @@ def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def build(deck_file: Path, force: bool = False) -> Path:
+def build(deck_file: Path, out_dir: Path, force: bool = False) -> Path:
+    """Write {slug}.pptx to out_dir. The .rendered stamp stays in the deck folder."""
     deck_dir = deck_file.parent
     style_file = deck_dir / "style.md"
     if not style_file.exists():
@@ -593,13 +594,18 @@ def build(deck_file: Path, force: bool = False) -> Path:
     style = load_style(style_file)
     deck = load_yaml(deck_file)
     slug = deck.get("slug") or deck_dir.name
-    out = deck_dir / f"{slug}.pptx"
+    out = out_dir / f"{slug}.pptx"
 
     # Re-rendering replaces the file, so refuse if someone edited it in PowerPoint since.
+    # No stamp means the file isn't this deck's render (out_dir is shared, e.g. the Desktop).
     stamp = deck_dir / ".rendered"
-    if out.exists() and stamp.exists() and digest(out) != stamp.read_text().strip() and not force:
-        raise FileExistsError(f"{out.name} was changed after the last render (edited in PowerPoint?). "
-                              "Move those edits into deck.yaml, or pass --force to overwrite them.")
+    if out.exists() and not force:
+        if not stamp.exists():
+            raise FileExistsError(f"{out} exists but wasn't rendered from {deck_dir.name}. "
+                                  "Move or rename it, change slug in deck.yaml, or pass --force to overwrite it.")
+        if digest(out) != stamp.read_text().strip():
+            raise FileExistsError(f"{out} was changed after the last render (edited in PowerPoint?). "
+                                  "Move those edits into deck.yaml, or pass --force to overwrite them.")
 
     prs = Presentation()
     prs.slide_width, prs.slide_height = Inches(W), Inches(H)
@@ -644,13 +650,12 @@ end run
 """
 
 
-def preview(pptx: Path) -> List[Path]:
-    """Slide PNGs in preview/, via Keynote (no LibreOffice on this Mac).
+def preview(pptx: Path, out: Path) -> List[Path]:
+    """Slide PNGs in out (the deck's preview/), via Keynote (no LibreOffice on this Mac).
 
     Keynote's rendering is close to PowerPoint's but not identical; fonts that
     aren't installed here are substituted in the preview only.
     """
-    out = pptx.parent / "preview"
     shutil.rmtree(out, ignore_errors=True)
     result = subprocess.run(["osascript", "-e", PREVIEW_SCRIPT, str(pptx), str(out)],
                             capture_output=True, text=True, timeout=300)

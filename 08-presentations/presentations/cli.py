@@ -19,7 +19,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 from .render import build, preview
-from .style import DECKS_DIR, SAMPLE_DECK, STYLES_DIR, load_style, split_front_matter
+from .style import DECKS_DIR, OUTPUT_DIR, SAMPLE_DECK, STYLES_DIR, load_style, split_front_matter
 
 log = logging.getLogger("presentations")
 
@@ -83,10 +83,10 @@ def copy_style(name: str, dest: Path, stamp: str) -> None:
     path.write_text(text.rstrip() + "\n" + THIS_DECK, encoding="utf-8")
 
 
-def show_result(pptx: Path, no_preview: bool) -> None:
+def show_result(pptx: Path, deck_dir: Path, no_preview: bool) -> None:
     print(pptx)
     if not no_preview:
-        for png in preview(pptx):
+        for png in preview(pptx, deck_dir / "preview"):
             print(png)
 
 
@@ -116,7 +116,7 @@ def cmd_render(args) -> None:
         path = Path(deck).expanduser().resolve()
         if path.is_dir():
             path = path / "deck.yaml"
-        show_result(build(path, force=args.force), args.no_preview)
+        show_result(build(path, OUTPUT_DIR, force=args.force), path.parent, args.no_preview)
 
 
 def sample_image(path: Path, colors: dict) -> None:
@@ -135,7 +135,7 @@ def cmd_sample(args) -> None:
     copy_style(args.style, folder, date.today().isoformat())
     shutil.copy(SAMPLE_DECK, folder / "deck.yaml")
     sample_image(folder / "images" / "sample.png", load_style(folder / "style.md")["colors"])
-    show_result(build(folder / "deck.yaml", force=True), args.no_preview)
+    show_result(build(folder / "deck.yaml", folder, force=True), folder, args.no_preview)
 
 
 def main() -> None:
@@ -154,7 +154,7 @@ def main() -> None:
     p.add_argument("--force", action="store_true")
     p.set_defaults(func=cmd_new)
 
-    p = sub.add_parser("render", help="Build the .pptx from deck.yaml + style.md, and preview PNGs.")
+    p = sub.add_parser("render", help="Build the .pptx on the Desktop from deck.yaml + style.md, and preview PNGs.")
     p.add_argument("decks", nargs="+", help="deck.yaml files or deck folders")
     p.add_argument("--no-preview", action="store_true")
     p.add_argument("--force", action="store_true", help="Overwrite a .pptx that was edited by hand.")
